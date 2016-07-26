@@ -1,0 +1,7 @@
+<library path="lib/librsband_local_planner">
+  <class name="rsband_local_planner/RSBandPlannerROS" type="rsband_local_planner::RSBandPlannerROS" base_class_type="nav_core::BaseLocalPlanner">
+    <description>
+      Reeds-Shepp Elastic Band Local Planner Plugin for BaseLocalPlanner.
+    </description>
+  </class>
+</library>
