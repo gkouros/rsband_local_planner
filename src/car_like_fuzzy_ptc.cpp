@@ -374,7 +374,6 @@ namespace rsband_local_planner
 
     if (isGoalReached(path))
     {
-      ROS_INFO("Goal Reached!");
       cmd = *new geometry_msgs::Twist;  // return cleared twist
       return;
     }

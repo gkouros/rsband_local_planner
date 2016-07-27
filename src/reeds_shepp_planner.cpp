@@ -118,7 +118,7 @@ namespace rsband_local_planner
     allowUnknown_ = config.allow_unknown;
     displayPlannerOutput_ = config.display_planner_output;
 
-    if (config.rear_steering_mode == 0 || config.rear_steering_mode ==  1)
+    if (config.rear_steering_mode == 0 || config.rear_steering_mode ==  2)
       minTurningRadius_ = config.wheelbase / tan(config.max_steering_angle);
     else  // counter or hybrid rear steering
         minTurningRadius_ =
@@ -336,27 +336,23 @@ namespace rsband_local_planner
   {
     newPath.clear();
 
-    bool success;
     for (unsigned int i = 0; i < floor(sqrt(path.size())); i++)
     {
-      success = planPath(
-        path.front(), path[(path.size()-1) / (i+1)], newPath);
-
-      if (success)
+      if (planPath(path.front(), path[(path.size()-1) / (i+1)], newPath))
       {
+        // connect reeds shepp plan with remaining original plan waypoints
         for (unsigned j = (path.size()-1)/(i+1); j < path.size(); j++)
         {
           geometry_msgs::PoseStamped pose;
           transform(path[j], pose, robotFrame_);
           newPath.push_back(pose);
         }
+
+        return true;
       }
     }
 
-    if (!success)
-    {
-      return false;
-    }
+    return false;
   }
 
 }  // namespace rsband_local_planner
