@@ -76,14 +76,14 @@ namespace rsband_local_planner
     globalPlanPub_ = pnh.advertise<nav_msgs::Path>("global_plan", 1);
     localPlanPub_ = pnh.advertise<nav_msgs::Path>("local_plan", 1);
     ebandPlanPub_ = pnh.advertise<nav_msgs::Path>("eband_plan", 1);
-    rsbandPlanPub_ = pnh.advertise<nav_msgs::Path>("reeds_sheep_plan", 1);
+    rsPlanPub_ = pnh.advertise<nav_msgs::Path>("reeds_sheep_plan", 1);
 
     // create new eband planner
     ebandPlanner_ = boost::shared_ptr<eband_local_planner::EBandPlanner>(
       new eband_local_planner::EBandPlanner(name, costmapROS_));
 
-    // create new reeds shepp band planner
-    rsbandPlanner_ = boost::shared_ptr<ReedsSheppPlanner>(
+    // create new reeds shepp planner
+    rsPlanner_ = boost::shared_ptr<ReedsSheppPlanner>(
       new ReedsSheppPlanner(name, costmapROS_, tfListener_));
     eband2RSStrategy_ = 0;
 
@@ -110,8 +110,8 @@ namespace rsband_local_planner
 
     eband2RSStrategy_ = config.eband_to_rs_strategy;
 
-    if (rsbandPlanner_)
-      rsbandPlanner_->reconfigure(config);
+    if (rsPlanner_)
+      rsPlanner_->reconfigure(config);
     else
       ROS_ERROR("Reconfigure CB called before reeds shepp planner "
         "initialization");
@@ -181,7 +181,7 @@ namespace rsband_local_planner
       return false;
     }
 
-    std::vector<geometry_msgs::PoseStamped> ebandPlan, rsbandPlan, localPlan;
+    std::vector<geometry_msgs::PoseStamped> ebandPlan, rsPlan, localPlan;
 
     if (isGoalReached())
     {
@@ -216,19 +216,19 @@ namespace rsband_local_planner
       switch (eband2RSStrategy_)
       {
         case 0:  // start to end planning strategy
-          failIdx = ebandPlan.size() * rsbandPlanner_->planPath(
-              ebandPlan.front(), ebandPlan.back(), rsbandPlan);
+          failIdx = ebandPlan.size() * rsPlanner_->planPath(
+              ebandPlan.front(), ebandPlan.back(), rsPlan);
           break;
         case 1:  // point to point planning strategy until failure
-          failIdx = rsbandPlanner_->planPathUntilFailure(ebandPlan, rsbandPlan);
+          failIdx = rsPlanner_->planPathUntilFailure(ebandPlan, rsPlan);
           break;
         case 2:  // point to point planning strategy that skips failures
-          failIdx = rsbandPlanner_->planPathSkipFailures(ebandPlan, rsbandPlan);
+          failIdx = rsPlanner_->planPathSkipFailures(ebandPlan, rsPlan);
           break;
         case 3:  // receding end planning strategy
           // plan path between start and end of eband and if it fails, decrement
           // end of eband and try again, until a solution or start is reached
-          failIdx = rsbandPlanner_->planRecedingPath(ebandPlan, rsbandPlan);
+          failIdx = rsPlanner_->planRecedingPath(ebandPlan, rsPlan);
           break;
         default:  // invalid strategy
           ROS_ERROR("Invalid eband_to_rs_strategy!");
@@ -236,26 +236,26 @@ namespace rsband_local_planner
       }
       if (!failIdx)
       {
-        ROS_ERROR("Failed to get rsband plan");
+        ROS_ERROR("Failed to get reeds shepp plan");
         return false;
       }
 
-      localPlan = rsbandPlan;
+      localPlan = rsPlan;
 
-      // merge rsbandPlan with the left out waypoints of eband
+      // merge rsPlan with the left out waypoints of eband to get rsband plan
       for (unsigned int i = failIdx+1; i < ebandPlan.size(); i++)
       {
         geometry_msgs::PoseStamped pose;
-        tfListener_->transformPose(rsbandPlan.front().header.frame_id,
+        tfListener_->transformPose(rsPlan.front().header.frame_id,
           ebandPlan.front().header.stamp, ebandPlan[i], ebandPlan[i].header.frame_id,
           pose);
         localPlan.push_back(pose);
       }
 
-      // publish global, local and rsband plans
+      // publish global, local and rs plans
       base_local_planner::publishPlan(globalPlan_, globalPlanPub_);
       base_local_planner::publishPlan(localPlan, localPlanPub_);
-      base_local_planner::publishPlan(rsbandPlan, rsbandPlanPub_);
+      base_local_planner::publishPlan(rsPlan, rsPlanPub_);
 
       // compute velocity command
       if (!ptc_->computeVelocityCommands(localPlan, cmd))

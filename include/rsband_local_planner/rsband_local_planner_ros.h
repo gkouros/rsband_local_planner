@@ -56,61 +56,115 @@
 namespace rsband_local_planner
 {
 
+  /**
+   * @brief RSBandPlannerROS
+   * @brief A local planner plugin for  move_base of ROS, for car like robots
+   */
   class RSBandPlannerROS : public nav_core::BaseLocalPlanner
   {
     public:
 
+      /**
+       * @brief Constructor
+       */
       RSBandPlannerROS();
 
+      /**
+       * @brief Destructor
+       */
       ~RSBandPlannerROS();
 
-      void initialize(std::string name, tf::TransformListener* tf,
+      /**
+       * @brief Initializes planner
+       * @param name: The name of the planner
+       * @param tfListener: ptr to a tf transform listener
+       * @param costmapROS: ptr to a costmap ros wrapper
+       */
+      void initialize(std::string name, tf::TransformListener* tfListener,
         costmap_2d::Costmap2DROS* costmapROS);
 
+      /**
+       * @brief Sets the global plan to be followed by this planner
+       * @param globalPlan: The plan to follow
+       * @return true if plan was set successfully
+       */
       bool setPlan(const std::vector<geometry_msgs::PoseStamped>& globalPlan);
 
+      /**
+       * @brief Computes the velocity command for the robot base
+       * @param cmd: The computed command container
+       * @return true if a cmd was computed successfully
+       */
       bool computeVelocityCommands(geometry_msgs::Twist& cmd);
 
+      /**
+       * @brief Checks whether the goal is reached
+       * @return true if goal is reached
+       */
       bool isGoalReached();
 
     private:
 
+      /**
+       * @brief Interpolates pose orientations of the given plan
+       * @param plan: The plan, for which to interpolate the poses
+       */
       void interpolateOrientations(
         std::vector<geometry_msgs::PoseStamped>& plan);
 
+      /**
+       * @brief Updates eband
+       * @details Prunes the eband and adds new target frames
+       * @return true if eband was updated successfully
+       */
       bool updateEBand();
 
+      /**
+       * @brief Reconfigures node parameters
+       * @param config: The dynamic reconfigure node configuration
+       */
       void reconfigureCallback(RSBandPlannerConfig& config, uint32_t level);
 
       typedef dynamic_reconfigure::Server<
         rsband_local_planner::RSBandPlannerConfig> drs;
+      //!< dynamic reconfigure server ptr
       boost::shared_ptr<drs> drs_;
 
+      //!< tf transform listener ptr
       tf::TransformListener* tfListener_;
+      //!< costmap ROS wrapper ptr
       costmap_2d::Costmap2DROS* costmapROS_;
 
-
+      //!< eband planner ptr
       boost::shared_ptr<eband_local_planner::EBandPlanner> ebandPlanner_;
-      boost::shared_ptr<ReedsSheppPlanner> rsbandPlanner_;
+      //!< reeds shepp planner ptr
+      boost::shared_ptr<ReedsSheppPlanner> rsPlanner_;
+      //!< path tracking controller ptr
       boost::shared_ptr<CarLikeFuzzyPTC> ptc_;
 
-      // goal tolerances
+      //!< distance to goal tolerance
       double xyGoalTolerance_;
+      //!< angular deviation from goal pose tolerance
       double yawGoalTolerance_;
 
-      // reeds shepp strategy
+      //!< eband to reeds shepp band conversion strategy
       unsigned int eband2RSStrategy_;
 
-      // plan publishers
+      //!< global plan publisher
       ros::Publisher globalPlanPub_;
+      //!< local plan publisher
       ros::Publisher localPlanPub_;
+      //!< eband plan publisher
       ros::Publisher ebandPlanPub_;
-      ros::Publisher rsbandPlanPub_;
+      //!< rs plan publisher
+      ros::Publisher rsPlanPub_;
 
-      // global plan container
+      //!< global plan
       std::vector<geometry_msgs::PoseStamped> globalPlan_;
+      //!< transformed plan
       std::vector<geometry_msgs::PoseStamped> transformedPlan_;
 
+      //!< eband plan start and end indexes regarding global plan
       std::vector<int> planStartEndCounters_;
 
       bool initialized_;
