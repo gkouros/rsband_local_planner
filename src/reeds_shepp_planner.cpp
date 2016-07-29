@@ -75,7 +75,6 @@ namespace rsband_local_planner
     pnh.param<int>("valid_state_max_cost", validStateMaxCost_, 252);
     pnh.param<int>("interpolation_num_poses", interpolationNumPoses_, 20);
     pnh.param<bool>("allow_unknown", allowUnknown_, false);
-    pnh.param<int>("skip_poses", skipPoses_, 0);
     pnh.param<bool>("display_planner_output", displayPlannerOutput_, false);
 
     if (costmapROS_)
@@ -113,7 +112,6 @@ namespace rsband_local_planner
   {
     maxPlanningDuration_ = config.max_planning_duration;
     interpolationNumPoses_ = config.interpolation_num_poses;
-    skipPoses_ = config.skip_poses;
     validStateMaxCost_ = config.valid_state_max_cost;
     allowUnknown_ = config.allow_unknown;
     displayPlannerOutput_ = config.display_planner_output;
@@ -214,7 +212,7 @@ namespace rsband_local_planner
   bool ReedsSheppPlanner::planPath(
     const geometry_msgs::PoseStamped& startPose,
     const geometry_msgs::PoseStamped& goalPose,
-    std::vector<geometry_msgs::PoseStamped>& pathPoses)
+    std::vector<geometry_msgs::PoseStamped>& path)
   {
     if (!initialized_)
     {
@@ -272,24 +270,24 @@ namespace rsband_local_planner
     simpleSetup_->simplifySolution();
 
     // get solution path
-    ompl::geometric::PathGeometric path = simpleSetup_->getSolutionPath();
+    ompl::geometric::PathGeometric omplPath = simpleSetup_->getSolutionPath();
     // interpolate between poses
-    path.interpolate(interpolationNumPoses_);
+    omplPath.interpolate(interpolationNumPoses_);
 
-    if (path.getStateCount() > interpolationNumPoses_)
+    if (omplPath.getStateCount() > interpolationNumPoses_)
       return false;
 
 
-    // resize pathPoses
-    pathPoses.resize(path.getStateCount());
+    // resize path
+    path.resize(omplPath.getStateCount());
 
-    // convert each state to a pose and store it in pathPoses vector
-    for (unsigned int i = 0; i < path.getStateCount(); i++)
+    // convert each state to a pose and store it in path vector
+    for (unsigned int i = 0; i < omplPath.getStateCount(); i++)
     {
-      const ompl::base::State* state = path.getState(i);
-      state2pose(state, pathPoses[i]);
-      pathPoses[i].header.frame_id = robotFrame_;
-      pathPoses[i].header.stamp = ros::Time::now();
+      const ompl::base::State* state = omplPath.getState(i);
+      state2pose(state, path[i]);
+      path[i].header.frame_id = robotFrame_;
+      path[i].header.stamp = ros::Time::now();
     }
 
     // enable console output
@@ -300,59 +298,62 @@ namespace rsband_local_planner
   }
 
 
-  bool ReedsSheppPlanner::planPath(
+  int ReedsSheppPlanner::planPathUntilFailure(
     const std::vector<geometry_msgs::PoseStamped>& path,
     std::vector<geometry_msgs::PoseStamped>& newPath)
   {
     newPath.clear();
 
-    unsigned int skipPoses =
-      std::min<unsigned int>(skipPoses_, path.size() - 2);
-
-    for (unsigned int i = 0; i < path.size() - 1; i =
-      std::min<unsigned int>(i+skipPoses+1, path.size() - skipPoses - 2))
+    for (unsigned int i = 0; i < path.size() - 1; i++)
     {
       std::vector<geometry_msgs::PoseStamped> tmpPath;
 
-      if (!planPath(path[i], path[i+skipPoses+1], tmpPath))
-      {
-        skipPoses++;
-        i--;
-        continue;
-      }
+      if (!planPath(path[i], path[i+1], tmpPath))
+        return i;
 
       newPath.insert(newPath.end(), tmpPath.begin(), tmpPath.end());
-
-      if (i >= path.size() - skipPoses - 2)
-        break;
     }
 
-    return true;
+    return path.size()-1;
   }
 
-  bool ReedsSheppPlanner::planRecedingPath(
+  int ReedsSheppPlanner::planPathSkipFailures(
     const std::vector<geometry_msgs::PoseStamped>& path,
     std::vector<geometry_msgs::PoseStamped>& newPath)
   {
     newPath.clear();
 
-    for (unsigned int i = 0; i < floor(sqrt(path.size())); i++)
+    for (unsigned int i = 0; i < path.size() - 1; i++)
     {
-      if (planPath(path.front(), path[(path.size()-1) / (i+1)], newPath))
-      {
-        // connect reeds shepp plan with remaining original plan waypoints
-        for (unsigned j = (path.size()-1)/(i+1); j < path.size(); j++)
-        {
-          geometry_msgs::PoseStamped pose;
-          transform(path[j], pose, robotFrame_);
-          newPath.push_back(pose);
-        }
+      std::vector<geometry_msgs::PoseStamped> tmpPath;
 
-        return true;
-      }
+      unsigned int end = i + 1;
+
+      while (!planPath(path[i], path[end++], tmpPath))
+        if (end > path.size() - 1)
+          return i;
+
+      i = end;
+
+      newPath.insert(newPath.end(), tmpPath.begin(), tmpPath.end());
     }
 
-    return false;
+    return path.size()-1;
+  }
+
+  int ReedsSheppPlanner::planRecedingPath(
+    const std::vector<geometry_msgs::PoseStamped>& path,
+    std::vector<geometry_msgs::PoseStamped>& newPath)
+  {
+    newPath.clear();
+
+    for (unsigned int i = path.size() - 1; i > 0; i--)
+    {
+      if (planPath(path[0], path[i], newPath))
+        return i;
+    }
+
+    return 0;
   }
 
 }  // namespace rsband_local_planner

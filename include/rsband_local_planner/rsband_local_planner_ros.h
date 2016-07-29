@@ -91,18 +91,21 @@ namespace rsband_local_planner
 
 
       boost::shared_ptr<eband_local_planner::EBandPlanner> ebandPlanner_;
-      boost::shared_ptr<ReedsSheppPlanner> rsPlanner_;
+      boost::shared_ptr<ReedsSheppPlanner> rsbandPlanner_;
       boost::shared_ptr<CarLikeFuzzyPTC> ptc_;
 
       // goal tolerances
       double xyGoalTolerance_;
       double yawGoalTolerance_;
 
+      // reeds shepp strategy
+      unsigned int eband2RSStrategy_;
+
       // plan publishers
       ros::Publisher globalPlanPub_;
       ros::Publisher localPlanPub_;
       ros::Publisher ebandPlanPub_;
-      ros::Publisher rsPlanPub_;
+      ros::Publisher rsbandPlanPub_;
 
       // global plan container
       std::vector<geometry_msgs::PoseStamped> globalPlan_;

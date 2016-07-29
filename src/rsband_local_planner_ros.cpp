@@ -76,15 +76,16 @@ namespace rsband_local_planner
     globalPlanPub_ = pnh.advertise<nav_msgs::Path>("global_plan", 1);
     localPlanPub_ = pnh.advertise<nav_msgs::Path>("local_plan", 1);
     ebandPlanPub_ = pnh.advertise<nav_msgs::Path>("eband_plan", 1);
-    rsPlanPub_ = pnh.advertise<nav_msgs::Path>("reeds_sheep_plan", 1);
+    rsbandPlanPub_ = pnh.advertise<nav_msgs::Path>("reeds_sheep_plan", 1);
 
     // create new eband planner
     ebandPlanner_ = boost::shared_ptr<eband_local_planner::EBandPlanner>(
       new eband_local_planner::EBandPlanner(name, costmapROS_));
 
     // create new reeds shepp band planner
-    rsPlanner_ = boost::shared_ptr<ReedsSheppPlanner>(
+    rsbandPlanner_ = boost::shared_ptr<ReedsSheppPlanner>(
       new ReedsSheppPlanner(name, costmapROS_, tfListener_));
+    eband2RSStrategy_ = 0;
 
     // create new path tracking controller
     ptc_ = boost::shared_ptr<CarLikeFuzzyPTC>(new CarLikeFuzzyPTC(name));
@@ -107,8 +108,10 @@ namespace rsband_local_planner
     xyGoalTolerance_ = config.xy_goal_tolerance;
     yawGoalTolerance_ = config.yaw_goal_tolerance;
 
-    if (rsPlanner_)
-      rsPlanner_->reconfigure(config);
+    eband2RSStrategy_ = config.eband_to_rs_strategy;
+
+    if (rsbandPlanner_)
+      rsbandPlanner_->reconfigure(config);
     else
       ROS_ERROR("Reconfigure CB called before reeds shepp planner "
         "initialization");
@@ -129,8 +132,6 @@ namespace rsband_local_planner
       ROS_ERROR("Planner must be initialized before setPlan is called!");
       return false;
     }
-
-    ROS_INFO("Got new global plan!");
 
     globalPlan_ = globalPlan;
 
@@ -153,8 +154,12 @@ namespace rsband_local_planner
 
     if(!ebandPlanner_->setPlan(transformedPlan_))
     {
-      ROS_ERROR("Setting plan to Elastic Band method failed!");
-      return false;
+      costmapROS_->resetLayers();
+      if(!ebandPlanner_->setPlan(transformedPlan_))
+      {
+        ROS_ERROR("Setting plan to Elastic Band failed!");
+        return false;
+      }
     }
 
     planStartEndCounters_ = planStartEndCounters;
@@ -176,7 +181,7 @@ namespace rsband_local_planner
       return false;
     }
 
-    std::vector<geometry_msgs::PoseStamped> ebandPlan, rsPlan, localPlan;
+    std::vector<geometry_msgs::PoseStamped> ebandPlan, rsbandPlan, localPlan;
 
     if (isGoalReached())
     {
@@ -202,25 +207,63 @@ namespace rsband_local_planner
       // interpolate orientations of eband plan
       interpolateOrientations(ebandPlan);
 
+      // publish eband plan
+      base_local_planner::publishPlan(ebandPlan, ebandPlanPub_);
+
       // use reeds shepp planner to connect eband waypoints using RS paths
-      // if (!rsPlanner_->planPath(ebandPlan.front(), ebandPlan.back(), rsPlan))
-      if (!rsPlanner_->planRecedingPath(ebandPlan, rsPlan))
+      // select between the available eband to reeds shepp conversion strategies
+      int failIdx;
+      switch (eband2RSStrategy_)
+      {
+        case 0:  // start to end planning strategy
+          failIdx = ebandPlan.size() * rsbandPlanner_->planPath(
+              ebandPlan.front(), ebandPlan.back(), rsbandPlan);
+          break;
+        case 1:  // point to point planning strategy until failure
+          failIdx = rsbandPlanner_->planPathUntilFailure(ebandPlan, rsbandPlan);
+          break;
+        case 2:  // point to point planning strategy that skips failures
+          failIdx = rsbandPlanner_->planPathSkipFailures(ebandPlan, rsbandPlan);
+          break;
+        case 3:  // receding end planning strategy
+          // plan path between start and end of eband and if it fails, decrement
+          // end of eband and try again, until a solution or start is reached
+          failIdx = rsbandPlanner_->planRecedingPath(ebandPlan, rsbandPlan);
+          break;
+        default:  // invalid strategy
+          ROS_ERROR("Invalid eband_to_rs_strategy!");
+          exit(EXIT_FAILURE);
+      }
+      if (!failIdx)
       {
         ROS_ERROR("Failed to get rsband plan");
         return false;
       }
 
-      // TODO set local plan as produced rsPlan plus remaining eband waypoints
-      localPlan = rsPlan;
+      localPlan = rsbandPlan;
+
+      // merge rsbandPlan with the left out waypoints of eband
+      for (unsigned int i = failIdx+1; i < ebandPlan.size(); i++)
+      {
+        geometry_msgs::PoseStamped pose;
+        tfListener_->transformPose(rsbandPlan.front().header.frame_id,
+          ebandPlan.front().header.stamp, ebandPlan[i], ebandPlan[i].header.frame_id,
+          pose);
+        localPlan.push_back(pose);
+      }
+
+      // publish global, local and rsband plans
+      base_local_planner::publishPlan(globalPlan_, globalPlanPub_);
+      base_local_planner::publishPlan(localPlan, localPlanPub_);
+      base_local_planner::publishPlan(rsbandPlan, rsbandPlanPub_);
 
       // compute velocity command
-      ptc_->computeVelocityCommands(localPlan, cmd);
+      if (!ptc_->computeVelocityCommands(localPlan, cmd))
+      {
+        ROS_ERROR("Path tracking controller failed to produce command");
+        return false;
+      }
     }
-
-    base_local_planner::publishPlan(globalPlan_, globalPlanPub_);
-    base_local_planner::publishPlan(ebandPlan, ebandPlanPub_);
-    base_local_planner::publishPlan(rsPlan, rsPlanPub_);
-    base_local_planner::publishPlan(localPlan, localPlanPub_);
 
     return true;
   }
@@ -348,7 +391,9 @@ namespace rsband_local_planner
       dy = plan[i+1].pose.position.y - plan[i].pose.position.y;
       yaw = atan2(dy, dx);
       plan[i].pose.orientation = tf::createQuaternionMsgFromYaw(yaw);
+      plan[i].header.stamp = plan.front().header.stamp;
     }
+    plan.back().header.stamp = plan.front().header.stamp;
 
     if ((!plan.back().pose.orientation.z && !plan.back().pose.orientation.w)
         || tf::getYaw(plan.back().pose.orientation) == 0.0)

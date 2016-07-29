@@ -76,11 +76,15 @@ namespace rsband_local_planner
         const geometry_msgs::PoseStamped& goalPose,
         std::vector<geometry_msgs::PoseStamped>& pathPoses);
 
-      bool planPath(
+      int planPathUntilFailure(
         const std::vector<geometry_msgs::PoseStamped>& path,
         std::vector<geometry_msgs::PoseStamped>& newPath);
 
-      bool planRecedingPath(
+      int planPathSkipFailures(
+        const std::vector<geometry_msgs::PoseStamped>& path,
+        std::vector<geometry_msgs::PoseStamped>& newPath);
+
+      int planRecedingPath(
         const std::vector<geometry_msgs::PoseStamped>& path,
         std::vector<geometry_msgs::PoseStamped>& newPath);
 
