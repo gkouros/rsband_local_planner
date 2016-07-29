@@ -151,6 +151,22 @@ namespace rsband_local_planner
     direction_->addTerm(new fl::Ramp("BW", 0.1, -0.1));
     engine_->addInputVariable(direction_);
 
+    // angle deviation error fuzzy input variable initialization
+    angularDeviationError_ = new fl::InputVariable;
+    angularDeviationError_->setEnabled(true);
+    angularDeviationError_->setName("Ea");
+    angularDeviationError_->setRange(-180.0, 180.0);
+    angularDeviationError_->addTerm(new fl::Trapezoid("RBR", -180.0, -180.0, -175.0, -165.0));
+    angularDeviationError_->addTerm(new fl::Trapezoid("RR", -175.0, -165.0, -130.0, -120.0));
+    angularDeviationError_->addTerm(new fl::Trapezoid("SR", -130.0, -120.0, -40.0, -30.0));
+    angularDeviationError_->addTerm(new fl::Trapezoid("FR", -40.0, -30.0, -15.0, -5.0));
+    angularDeviationError_->addTerm(new fl::Trapezoid("FA", -15.0, -5.0, 10.0, 5.0));
+    angularDeviationError_->addTerm(new fl::Trapezoid("FL", 5.0, 15.0, 30.0, 40.0));
+    angularDeviationError_->addTerm(new fl::Trapezoid("SL", 30.0, 40.0, 120.0, 130.0));
+    angularDeviationError_->addTerm(new fl::Trapezoid("RL", 120.0, 130.0, 165.0, 175.0));
+    angularDeviationError_->addTerm(new fl::Trapezoid("RBL", 165.0, 175.0, 180.0, 180.0));
+    engine_->addInputVariable(angularDeviationError_);
+
     // orientation error input variable initialization
     orientationError_ = new fl::InputVariable;
     orientationError_->setEnabled(true);
@@ -166,22 +182,6 @@ namespace rsband_local_planner
     orientationError_->addTerm(new fl::Trapezoid("RL", 120.0, 130.0, 165.0, 175.0));
     orientationError_->addTerm(new fl::Trapezoid("RBL", 165.0, 175.0, 180.0, 180.0));
     engine_->addInputVariable(orientationError_);
-
-    // final orientation error fuzzy input variable initialization
-    finalOrientationError_ = new fl::InputVariable;
-    finalOrientationError_->setEnabled(true);
-    finalOrientationError_->setName("Efo");
-    finalOrientationError_->setRange(-180.0, 180.0);
-    finalOrientationError_->addTerm(new fl::Trapezoid("RBR", -180.0, -180.0, -175.0, -165.0));
-    finalOrientationError_->addTerm(new fl::Trapezoid("RR", -175.0, -165.0, -130.0, -120.0));
-    finalOrientationError_->addTerm(new fl::Trapezoid("SR", -130.0, -120.0, -40.0, -30.0));
-    finalOrientationError_->addTerm(new fl::Trapezoid("FR", -40.0, -30.0, -15.0, -5.0));
-    finalOrientationError_->addTerm(new fl::Trapezoid("FA", -15.0, -5.0, 10.0, 5.0));
-    finalOrientationError_->addTerm(new fl::Trapezoid("FL", 5.0, 15.0, 30.0, 40.0));
-    finalOrientationError_->addTerm(new fl::Trapezoid("SL", 30.0, 40.0, 120.0, 130.0));
-    finalOrientationError_->addTerm(new fl::Trapezoid("RL", 120.0, 130.0, 165.0, 175.0));
-    finalOrientationError_->addTerm(new fl::Trapezoid("RBL", 165.0, 175.0, 180.0, 180.0));
-    engine_->addInputVariable(finalOrientationError_);
 
     // position error input variable initialization
     positionError_ = new fl::InputVariable;
@@ -260,77 +260,77 @@ namespace rsband_local_planner
     ruleBlock_ = new fl::RuleBlock;
 
     // front steering rules
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is RBL then FSA is Z", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is RL  then FSA is LH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is SL  then FSA is LH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is FL  then FSA is LL", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is FA  then FSA is Z", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is FR  then FSA is RL", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is SR  then FSA is RH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is RR  then FSA is RH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is RBR then FSA is Z", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Efo is SL then FSA is LH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Efo is FL then FSA is LL", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Efo is FA then FSA is Z", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Efo is FR then FSA is RL", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Efo is SR then FSA is RH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Efo is SL then FSA is RH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Efo is FL then FSA is RL", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Efo is FR then FSA is LH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Efo is SR then FSA is LL", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RBL then FSA is Z", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RL  then FSA is LH", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is SL  then FSA is LH", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is FL  then FSA is LL", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is FA  then FSA is Z", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is FR  then FSA is RL", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is SR  then FSA is RH", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RR  then FSA is RH", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RBR then FSA is Z", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is SL then FSA is LH", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is FL then FSA is LL", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is FA then FSA is Z", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is FR then FSA is RL", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is SR then FSA is RH", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is SL then FSA is RH", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is FL then FSA is RL", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is FR then FSA is LH", engine_));
+    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is SR then FSA is LL", engine_));
 
     // rear steering rules
     if (rearSteeringMode_ == "crab")
     {
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Efo is somewhat FA and Ey is BP then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Efo is somewhat FA and Ey is SP then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Efo is somewhat FA and Ey is Z then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Efo is somewhat FA and Ey is SN then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Efo is somewhat FA and Ey is BN then RSA is LH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is somewhat FA and Ey is BP then RSA is RH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is somewhat FA and Ey is SP then RSA is RH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is somewhat FA and Ey is Z then RSA is Z", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is somewhat FA and Ey is SN then RSA is LH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is somewhat FA and Ey is BN then RSA is LH", engine_));
 
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Efo is somewhat FA and Ey is BP then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Efo is somewhat FA and Ey is SP then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Efo is somewhat FA and Ey is Z then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Efo is somewhat FA and Ey is SN then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Efo is somewhat FA and Ey is BN then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Efo is not FA then RSA is Z", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is somewhat FA and Ey is BP then RSA is LH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is somewhat FA and Ey is SP then RSA is LH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is somewhat FA and Ey is Z then RSA is Z", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is somewhat FA and Ey is SN then RSA is RH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is somewhat FA and Ey is BN then RSA is RH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Eo is not FA then RSA is Z", engine_));
     }
     else if (rearSteeringMode_ == "counter")
     { // use same rules as in front steering but with opposite steering angle
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is RBL then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is RL  then RSA is RL", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is SL  then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is FL  then RSA is RL", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is FA  then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is FR  then RSA is LL", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is SR  then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is RR  then RSA is LL", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Eo is RBR then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Efo is SL then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Efo is FL then RSA is RL", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Efo is FA then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Efo is FR then RSA is LL", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Efo is SR then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Efo is SL then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Efo is FL then RSA is LL", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Efo is FR then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Efo is SR then RSA is RL", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RBL then RSA is Z", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RL  then RSA is RL", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is SL  then RSA is RH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is FL  then RSA is RL", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is FA  then RSA is Z", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is FR  then RSA is LL", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is SR  then RSA is LH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RR  then RSA is LL", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RBR then RSA is Z", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is SL then RSA is RH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is FL then RSA is RL", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is FA then RSA is Z", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is FR then RSA is LL", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is SR then RSA is LH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is SL then RSA is LH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is FL then RSA is LL", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is FR then RSA is RH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is SR then RSA is RL", engine_));
     }
     else if (rearSteeringMode_ == "hybrid")
     {
-      ruleBlock_->addRule(fl::Rule::parse("if Efo is not FA then RSA is Z", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Eo is not FA then RSA is Z", engine_));
 
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Efo is FA and Ey is BP then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Efo is FA and Ey is SP then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Efo is FA and Ey is Z then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Efo is FA and Ey is SN then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Efo is FA and Ey is BN then RSA is Z", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is FA and Ey is BP then RSA is Z", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is FA and Ey is SP then RSA is RH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is FA and Ey is Z then RSA is Z", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is FA and Ey is SN then RSA is LH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is FA and Ey is BN then RSA is Z", engine_));
 
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Efo is FA and Ey is BP then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Efo is FA and Ey is SP then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Efo is FA and Ey is Z then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Efo is FA and Ey is SN then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Efo is FA and Ey is BN then RSA is Z", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is FA and Ey is BP then RSA is Z", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is FA and Ey is SP then RSA is RH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is FA and Ey is Z then RSA is Z", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is FA and Ey is SN then RSA is LH", engine_));
+      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is FA and Ey is BN then RSA is Z", engine_));
     }
     else if (rearSteeringMode_ == "none")
     {
@@ -369,14 +369,14 @@ namespace rsband_local_planner
 
     unsigned int subGoalIdx = findSubGoal(path);
 
+    double ea = calcAngularDeviationError(path, subGoalIdx);
     double eo = calcOrientationError(path, subGoalIdx);
-    double efo = calcFinalOrientationError(path, subGoalIdx);
     double ep = calcPositionError(path, subGoalIdx);
     double ey = calcLateralDeviationError(path, subGoalIdx);
-    int drcn = (rad2deg(fabs(eo)) < 120) ? 1 : -1;
+    int drcn = (rad2deg(fabs(ea)) < 120) ? 1 : -1;
 
-    ROS_INFO_COND(displayControllerIO_, "Eo: %f, Efo: %f, Ep: %f, Ey: %f",
-      rad2deg(eo), rad2deg(efo), ep, ey);
+    ROS_INFO_COND(displayControllerIO_, "Ea: %f, Eo: %f, Ep: %f, Ey: %f",
+      rad2deg(ea), rad2deg(eo), ep, ey);
 
     if (isGoalReached(path))
     {
@@ -384,8 +384,8 @@ namespace rsband_local_planner
       return true;
     }
 
+    angularDeviationError_->setInputValue(rad2deg(ea));
     orientationError_->setInputValue(rad2deg(eo));
-    finalOrientationError_->setInputValue(rad2deg(efo));
     positionError_->setInputValue(ep);
     lateralDeviationError_->setInputValue(ey);
     direction_->setInputValue(drcn);
@@ -454,12 +454,12 @@ namespace rsband_local_planner
     bool positionReached =
       calcPositionError(path, path.size()-1) < xyGoalTolerance_;
     bool orientationReached =
-      fabs(calcFinalOrientationError(path, path.size()-1)) < yawGoalTolerance_;
+      fabs(calcOrientationError(path, path.size()-1)) < yawGoalTolerance_;
     return positionReached && orientationReached;
   }
 
 
-  double CarLikeFuzzyPTC::calcOrientationError(
+  double CarLikeFuzzyPTC::calcAngularDeviationError(
     const std::vector<geometry_msgs::PoseStamped>& path,
     unsigned int subGoalIdx)
   {
@@ -468,7 +468,7 @@ namespace rsband_local_planner
   }
 
 
-  double CarLikeFuzzyPTC::calcFinalOrientationError(
+  double CarLikeFuzzyPTC::calcOrientationError(
     const std::vector<geometry_msgs::PoseStamped>& path,
     unsigned int subGoalIdx)
   {
@@ -484,20 +484,12 @@ namespace rsband_local_planner
   }
 
 
-  double CarLikeFuzzyPTC::calcLongitudinalDistanceFromGoal(
-    const std::vector<geometry_msgs::PoseStamped>& path,
-    unsigned int subGoalIdx)
-  {
-    return path[subGoalIdx].pose.position.x;
-  }
-
-
   double CarLikeFuzzyPTC::calcLateralDeviationError(
     const std::vector<geometry_msgs::PoseStamped>& path,
     unsigned int subGoalIdx)
   {
     return calcPositionError(path, subGoalIdx)
-      * sin(calcOrientationError(path, subGoalIdx));
+      * sin(calcAngularDeviationError(path, subGoalIdx));
   }
 
 
