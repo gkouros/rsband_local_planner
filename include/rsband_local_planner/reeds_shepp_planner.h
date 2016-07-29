@@ -53,37 +53,90 @@
 namespace rsband_local_planner
 {
 
+  /**
+   * @class ReedsSheppPlanner
+   * @brief Planner - ROS wrapper for the Reeds-Shepp state space of OMPL
+   */
   class ReedsSheppPlanner
   {
     public:
 
+      /**
+       * @brief Constructor
+       * @param name: Name used to load planner parameters
+       * @param costmapROS: Ptr to the ROS wrapper of the local costmap
+       * @param tfListener: Ptr to a tf transform listener
+       */
       ReedsSheppPlanner(
         std::string name,
         costmap_2d::Costmap2DROS* costmapROS,
         tf::TransformListener* tfListener);
 
+      /**
+       * @bfief Destructor
+       */
       ~ReedsSheppPlanner();
 
+      /**
+       * @param name: Name used to load planner parameters
+       * @brief Initializes the planner
+       * @param costmapROS: Ptr to the ROS wrapper of the local costmap
+       * @param tfListener: Ptr to a tf transform listener
+       */
       void initialize(
         std::string name,
         costmap_2d::Costmap2DROS* costmapROS,
         tf::TransformListener* tfListener);
 
+      /**
+       * @brief Reconfigures the parameters of the planner
+       * @param config: The dynamic reconfigure configuration
+       */
       void reconfigure(RSBandPlannerConfig& config);
 
+      /**
+       * @brief Plans a Reeds-Shepp path between the start and end poses
+       * @param startPose: The start pose of the path
+       * @param endPose: The final pose of the path
+       * @param path: The Reeds-Shepp path that will be returned
+       * @return true if planning succeeds
+       */
       bool planPath(
         const geometry_msgs::PoseStamped& startPose,
         const geometry_msgs::PoseStamped& goalPose,
-        std::vector<geometry_msgs::PoseStamped>& pathPoses);
+        std::vector<geometry_msgs::PoseStamped>& path);
 
+      /**
+       * @brief Plans a series of Reeds-Shepp paths that connect the path poses
+       * @details If a subpath fails the function returns
+       * @param path: Contains the path poses to connect via Reeds-Shepp paths
+       * @param newPath: Container for the returned path
+       * @return The idx of the pose the planning failed at
+       */
       int planPathUntilFailure(
         const std::vector<geometry_msgs::PoseStamped>& path,
         std::vector<geometry_msgs::PoseStamped>& newPath);
 
+      /**
+       * @brief Plans a series of Reeds-Shepp paths that connect the path poses
+       * @details If a subpath fails, the planner continues with the next pose
+       * @param path: Contains the path poses to connect via Reeds-Shepp paths
+       * @param newPath: Container for the returned path
+       * @return The idx of the pose the planning failed at
+       */
       int planPathSkipFailures(
         const std::vector<geometry_msgs::PoseStamped>& path,
         std::vector<geometry_msgs::PoseStamped>& newPath);
 
+      /**
+       * @brief Plans a Reeds-Shepp path between the start pose and a receding
+       * end pose
+       * @details Each time the planner fails, it uses the immediate pose before
+       * the current end pose
+       * @param path: Contains the path poses to connect via Reeds-Shepp paths
+       * @param newPath: Container for the returned path
+       * @return The idx of the pose the planning failed at
+       */
       int planRecedingPath(
         const std::vector<geometry_msgs::PoseStamped>& path,
         std::vector<geometry_msgs::PoseStamped>& newPath);
@@ -98,50 +151,99 @@ namespace rsband_local_planner
 
     private:
 
+      /**
+       * @brief Transforms the given pose to the target reference frame
+       * @param poseIn: The given pose to transform
+       * @param poseOut: The transformed pose container
+       * @param newFrameID: The target reference frame to use in the transform
+       */
       void transform(const geometry_msgs::PoseStamped& poseIn,
         geometry_msgs::PoseStamped& poseOut, std::string newFrameID);
 
+      /**
+       * @brief Transforms the given pose to the target reference frame
+       * @param tfIn: The given tf pose to transform
+       * @param tfOut: The transformed tf pose container
+       * @param newFrameID: The target reference frame to use in the transform
+       */
       void transform(const tf::Stamped<tf::Pose>& tfIn,
         tf::Stamped<tf::Pose>& tfOut, std::string newFrameID);
 
+      /**
+       * @brief Converts an ompl state to a pose msg
+       * @param state: The ompl state to convert to a pose msg
+       * @param pose: The converted pose msg container
+       */
       void state2pose(
         const ompl::base::State* state, geometry_msgs::PoseStamped& pose);
 
+      /**
+       * @brief Converts a pose msg to an ompl state
+       * @param pose: The pose to convert to an ompl state
+       * @param state: The converted ompl state container
+       */
       void pose2state(
         const geometry_msgs::PoseStamped& pose, ompl::base::State* state);
 
+      /**
+       * @brief Checks whether a state/pose is valid
+       * @details A state is valid if it is within defined boundaries and not
+       * in collision with the environment
+       * @param si: Ptr to an ompl space information object
+       * @param state: Ptr to the state to check for validity
+       * @return true if state is valid
+       */
       bool isStateValid(
         const ompl::base::SpaceInformation* si, const ompl::base::State *state);
 
     private:
 
+      //!< The ompl Reeds-Sheep state space
       ompl::base::StateSpacePtr reedsSheppStateSpace_;
+      //!< OMPL geometric simple setup object
       ompl::geometric::SimpleSetupPtr simpleSetup_;
+      //!< planner space boundaries (should match local costmap boundaries)
       ompl::base::RealVectorBounds bounds_;
 
+      //!< ptr to costmap
       costmap_2d::Costmap2D* costmap_;
+      //!< ptr to costmap ros wrapper
       costmap_2d::Costmap2DROS* costmapROS_;
+      //!< ptr to costmap model
       base_local_planner::CostmapModel* costmapModel_;
+      //!< robot footprint, used in validity checking
       std::vector<geometry_msgs::Point> footprint_;
 
+      //!< tf transform listener
       tf::TransformListener* tfListener_;
 
+      //!< the reference frame of the robot base
       std::string robotFrame_;
+      //!< the reference frame of the costmap
       std::string globalFrame_;
 
+      //!< the stamp to use in path poses
       ros::Time stamp_;
 
+      //!< minimum turning radius of the robot (dependent on rear steering mode)
       double minTurningRadius_;
+      //!< maximum Reeds-Shepp planning duration
       double maxPlanningDuration_;
+      //!< number of poses to interpolate in the reeds shepp path
       int interpolationNumPoses_;
-      int skipPoses_;
+      //!< below this cost, a state is considered valid
       int validStateMaxCost_;
+      //!< if true considers unknown costmap cells as free
       bool allowUnknown_;
+      //!< display planning information
       bool displayPlannerOutput_;
 
+      //!< boundary size x
       double bx_;
+      //!< boundary size y
       double by_;
 
+      //!< set if planner is initialized
       bool initialized_;
   };
 
