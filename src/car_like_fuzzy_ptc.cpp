@@ -357,10 +357,16 @@ namespace rsband_local_planner
   }
 
 
-  void CarLikeFuzzyPTC::computeVelocityCommands(
+  bool CarLikeFuzzyPTC::computeVelocityCommands(
     const std::vector<geometry_msgs::PoseStamped>& path,
     geometry_msgs::Twist& cmd)
   {
+    if (path.empty())
+    {
+      ROS_ERROR("Plan given to path tracking controller is empty!");
+      return false;
+    }
+
     unsigned int subGoalIdx = findSubGoal(path);
 
     double eo = calcOrientationError(path, subGoalIdx);
@@ -375,7 +381,7 @@ namespace rsband_local_planner
     if (isGoalReached(path))
     {
       cmd = *new geometry_msgs::Twist;  // return cleared twist
-      return;
+      return true;
     }
 
     orientationError_->setInputValue(rad2deg(eo));
@@ -422,11 +428,13 @@ namespace rsband_local_planner
       ROS_ERROR("Speed=Nan. Something went wrong!");
       cmd.linear.x = 0.0;
       cmd.linear.y = 0.0;
+      return false;
     }
     if (isnan(cmd.angular.z))
     {
       ROS_ERROR("RotVel=Nan. Something went wrong!");
       cmd.angular.z = 0.0;
+      return false;
     }
 
     if (stop_)
@@ -435,6 +443,8 @@ namespace rsband_local_planner
       cmd.linear.y = 0.0;
       cmd.angular.z = 0.0;
     }
+
+    return true;
   }
 
 
