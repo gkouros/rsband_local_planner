@@ -1,0 +1,41 @@
+fuzzy_rules:
+  speed_rules:
+    - "if Ep is CLOSE then Speed is SLOW"
+    - "if Ep is FAR then Speed is FAST"
+
+  front_steering_rules:
+    - "if Ep is FAR and Ea is RBL then FSA is  Z"
+    - "if Ep is FAR and Ea is  RL then FSA is LH"
+    - "if Ep is FAR and Ea is  SL then FSA is LH"
+    - "if Ep is FAR and Ea is  FL then FSA is LL"
+    - "if Ep is FAR and Ea is  FA then FSA is  Z"
+    - "if Ep is FAR and Ea is  FR then FSA is RL"
+    - "if Ep is FAR and Ea is  SR then FSA is RH"
+    - "if Ep is FAR and Ea is  RR then FSA is RH"
+    - "if Ep is FAR and Ea is RBR then FSA is  Z"
+    - "if Ep is CLOSE and Direction is FW and Eo is SL then FSA is LH"
+    - "if Ep is CLOSE and Direction is FW and Eo is FL then FSA is LL"
+    - "if Ep is CLOSE and Direction is FW and Eo is FA then FSA is Z "
+    - "if Ep is CLOSE and Direction is FW and Eo is FR then FSA is RL"
+    - "if Ep is CLOSE and Direction is FW and Eo is SR then FSA is RH"
+    - "if Ep is CLOSE and Direction is BW and Eo is SL then FSA is RH"
+    - "if Ep is CLOSE and Direction is BW and Eo is FL then FSA is RL"
+    - "if Ep is CLOSE and Direction is BW and Eo is FR then FSA is LH"
+    - "if Ep is CLOSE and Direction is BW and Eo is SR then FSA is LL"
+
+# none mode: rear_steering_angle = 0
+# counter mode: rear_steering_angle = -front_steering_angle
+# crab mode: rear_steering_angle = rear_steering_deviation_rules
+# hybrid mode: rear_steering_angle = -front_steering_angle + rear_steering_deviation_rules
+  rear_steering_deviation_rules:
+    - "if Eo is not FA then RSDA is Z"
+    - "if Direction is FW and Eo is somewhat FA and Ey is BP then RSDA is  Z"
+    - "if Direction is FW and Eo is somewhat FA and Ey is SP then RSDA is LH"
+    - "if Direction is FW and Eo is somewhat FA and Ey is  Z then RSDA is  Z"
+    - "if Direction is FW and Eo is somewhat FA and Ey is SN then RSDA is RH"
+    - "if Direction is FW and Eo is somewhat FA and Ey is BN then RSDA is  Z"
+    - "if Direction is BW and Eo is somewhat FA and Ey is BP then RSDA is  Z"
+    - "if Direction is BW and Eo is somewhat FA and Ey is SP then RSDA is LH"
+    - "if Direction is BW and Eo is somewhat FA and Ey is  Z then RSDA is  Z"
+    - "if Direction is BW and Eo is somewhat FA and Ey is SN then RSDA is RH"
+    - "if Direction is BW and Eo is somewhat FA and Ey is BN then RSDA is  Z"

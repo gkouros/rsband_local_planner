@@ -74,19 +74,9 @@ namespace rsband_local_planner
       ~CarLikeFuzzyPTC();
 
       /**
-       * @brief Initializes controller
-       */
-      void initialize();
-
-      /**
        * @brief Reconfigures controller params
        */
       void reconfigure(RSBandPlannerConfig& config);
-
-      /**
-       * @brief Initializes fuzzy engine
-       */
-      void initializeFuzzyEngine();
 
       /**
        * @brief Computes velocity commands
@@ -104,6 +94,19 @@ namespace rsband_local_planner
        * @return true: if the goal has been reached
        */
       bool isGoalReached(const std::vector<geometry_msgs::PoseStamped>& path);
+
+
+    private:
+
+      /**
+       * @brief Initializes controller
+       */
+      void initialize();
+
+      /**
+       * @brief Initializes fuzzy engine
+       */
+      void initializeFuzzyEngine();
 
       /**
        * @brief Calculates angular deviation from subgoal
@@ -174,10 +177,12 @@ namespace rsband_local_planner
         const std::vector<geometry_msgs::PoseStamped>& path,
         unsigned int idx);
 
-    private:
 
       //!< private ros node handle
       ros::NodeHandle* pnh_;
+
+      //!< variable indicating whether the controller has been initialized
+      bool initialized_;
 
       //!< publisher of the current sub goal marker
       ros::Publisher subGoalPub_;
@@ -206,10 +211,11 @@ namespace rsband_local_planner
       //!< if true controller returns zero velocity commands
       bool stop_;
 
+      // fuzzylite related variables
+
       //!< position FLC engine
       fl::Engine* engine_;
-      //!< flc rule block
-      fl::RuleBlock* ruleBlock_;
+
       //!< direction (forwards/backwards) input variable
       fl::InputVariable* direction_;
       //!< robot to goal direction orientation error input variable
@@ -222,10 +228,19 @@ namespace rsband_local_planner
       fl::InputVariable* lateralDeviationError_;
       //!< steering angle output variable 1
       fl::OutputVariable* frontSteeringAngle_;
-      //!< rear steering angle output variable
-      fl::OutputVariable* rearSteeringAngle_;
+      //!< rear steering deviation angle output variable
+      fl::OutputVariable* rearSteeringDeviationAngle_;
       //!< speed output variable
       fl::OutputVariable* speed_;
+
+      //!< flc rule block
+      fl::RuleBlock* ruleBlock_;
+
+      // fuzzy rules
+      std::vector<std::string> speedRules_;
+      std::vector<std::string> frontSteeringRules_;
+      std::vector<std::string> rearSteeringDeviationRules_;
+
   };
 
 }

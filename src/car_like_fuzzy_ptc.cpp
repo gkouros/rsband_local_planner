@@ -36,8 +36,12 @@
 *********************************************************************/
 
 #include "rsband_local_planner/car_like_fuzzy_ptc.h"
+
+#include <ros/package.h>
 #include <math.h>
 #include <tf/tf.h>
+#include <boost/foreach.hpp>
+#include <yaml-cpp/yaml.h>
 
 namespace
 {
@@ -55,7 +59,7 @@ namespace
 namespace rsband_local_planner
 {
 
-  CarLikeFuzzyPTC::CarLikeFuzzyPTC(std::string name)
+  CarLikeFuzzyPTC::CarLikeFuzzyPTC(std::string name) : initialized_(false)
   {
     pnh_ = new ros::NodeHandle("~/" + name);
     initialize();
@@ -72,6 +76,12 @@ namespace rsband_local_planner
 
   void CarLikeFuzzyPTC::initialize()
   {
+    if (initialized_)
+    {
+      ROS_ERROR("Controller already initialized!");
+      return;
+    }
+
     pnh_->param("wheelbase", wheelbase_, 0.32);
     pnh_->param("max_steering_angle", maxSteeringAngle_, 0.35);
     pnh_->param("max_speed", maxSpeed_, 0.2);
@@ -81,6 +91,42 @@ namespace rsband_local_planner
     pnh_->param("lateral_deviation_tolerance", latDevTolerance_, 0.2);
     pnh_->param<std::string>("rear_steering_mode", rearSteeringMode_, "none");
     pnh_->param<bool>("display_controller_io", displayControllerIO_, false);
+
+    // load fuzzy rules
+    if (pnh_->hasParam("fuzzy_rules"))  // load from param server if available
+    {
+      if (pnh_->getParam("fuzzy_rules/speed_rules", speedRules_))
+      {
+        ROS_FATAL("Failed to load speed fuzzy rules!");
+        exit(EXIT_FAILURE);
+      }
+
+      if (pnh_->getParam("fuzzy_rules/front_steering_rules",
+          frontSteeringRules_))
+      {
+        ROS_FATAL("Failed to load front steering fuzzy rules!");
+        exit(EXIT_FAILURE);
+      }
+
+      if (pnh_->getParam("fuzzy_rules/rear_steering_deviation_rules",
+          speedRules_))
+        ROS_WARN("Failed to load rear steering deviation fuzzy rules!");
+    }
+    else  // load from yaml file in pkg
+    {
+      std::string pkgPath = ros::package::getPath("rsband_local_planner");
+      YAML::Node config = YAML::LoadFile(
+        pkgPath + "/cfg/path_tracking_controller_fuzzy_rules.yaml");
+
+      speedRules_ =
+        config["fuzzy_rules"]["speed_rules"].as< std::vector<std::string> >();
+      frontSteeringRules_ =
+        config["fuzzy_rules"]["front_steering_rules"].as<
+        std::vector<std::string> >();
+      rearSteeringDeviationRules_ =
+        config["fuzzy_rules"]["rear_steering_deviation_rules"].as<
+        std::vector<std::string> >();
+    }
 
     if (!(rearSteeringMode_ == "counter" || rearSteeringMode_ == "crab"
       || rearSteeringMode_ == "hybrid" || rearSteeringMode_ == "none"))
@@ -95,6 +141,8 @@ namespace rsband_local_planner
     subGoal_.scale.x = subGoal_.scale.y = subGoal_.scale.z = 0.1;
     subGoal_.color.b = 1.0f; subGoal_.color.a = 1;
     subGoalPub_ = pnh_->advertise<visualization_msgs::Marker>("sub_goal", 1);
+
+    initialized_ = true;
 
     // initialize fuzzy engine
     initializeFuzzyEngine();
@@ -136,6 +184,12 @@ namespace rsband_local_planner
 
   void CarLikeFuzzyPTC::initializeFuzzyEngine()
   {
+    if (!initialized_)
+    {
+      ROS_ERROR("Fuzzy Engine Initialization attempted before controller "
+        "initialization");
+      return;
+    }
     // initialize FLC engine
     engine_ = new fl::Engine();
     engine_->setName("fuzzy_path_tracking_controller");
@@ -226,21 +280,21 @@ namespace rsband_local_planner
     engine_->addOutputVariable(frontSteeringAngle_);
 
     // rear steering angle output variable initialization
-    rearSteeringAngle_ = new fl::OutputVariable;
-    rearSteeringAngle_->setEnabled(true);
-    rearSteeringAngle_->setName("RSA");
-    rearSteeringAngle_->setRange(-rad2deg(maxSteeringAngle_), rad2deg(maxSteeringAngle_));
-    rearSteeringAngle_->fuzzyOutput()->setAccumulation(fl::null);
-    rearSteeringAngle_->setDefuzzifier(new fl::WeightedAverage("TakagiSugeno"));
-    rearSteeringAngle_->setDefaultValue(fl::null);
-    rearSteeringAngle_->setLockPreviousOutputValue(true);
-    rearSteeringAngle_->setLockOutputValueInRange(false);
-    rearSteeringAngle_->addTerm(new fl::Constant("RH", -rad2deg(maxSteeringAngle_)));
-    rearSteeringAngle_->addTerm(new fl::Constant("RL", -rad2deg(maxSteeringAngle_) / 2));
-    rearSteeringAngle_->addTerm(new fl::Constant("Z", 0.0));
-    rearSteeringAngle_->addTerm(new fl::Constant("LL", rad2deg(maxSteeringAngle_) / 2));
-    rearSteeringAngle_->addTerm(new fl::Constant("LH", rad2deg(maxSteeringAngle_)));
-    engine_->addOutputVariable(rearSteeringAngle_);
+    rearSteeringDeviationAngle_ = new fl::OutputVariable;
+    rearSteeringDeviationAngle_->setEnabled(true);
+    rearSteeringDeviationAngle_->setName("RSDA");
+    rearSteeringDeviationAngle_->setRange(-rad2deg(maxSteeringAngle_), rad2deg(maxSteeringAngle_));
+    rearSteeringDeviationAngle_->fuzzyOutput()->setAccumulation(fl::null);
+    rearSteeringDeviationAngle_->setDefuzzifier(new fl::WeightedAverage("TakagiSugeno"));
+    rearSteeringDeviationAngle_->setDefaultValue(fl::null);
+    rearSteeringDeviationAngle_->setLockPreviousOutputValue(true);
+    rearSteeringDeviationAngle_->setLockOutputValueInRange(false);
+    rearSteeringDeviationAngle_->addTerm(new fl::Constant("RH", -rad2deg(maxSteeringAngle_)));
+    rearSteeringDeviationAngle_->addTerm(new fl::Constant("RL", -rad2deg(maxSteeringAngle_) / 2));
+    rearSteeringDeviationAngle_->addTerm(new fl::Constant("Z", 0.0));
+    rearSteeringDeviationAngle_->addTerm(new fl::Constant("LL", rad2deg(maxSteeringAngle_) / 2));
+    rearSteeringDeviationAngle_->addTerm(new fl::Constant("LH", rad2deg(maxSteeringAngle_)));
+    engine_->addOutputVariable(rearSteeringDeviationAngle_);
 
     // speed output variable initialization
     speed_ = new fl::OutputVariable;
@@ -250,105 +304,31 @@ namespace rsband_local_planner
     speed_->setRange(0.0, maxSpeed_);
     speed_->fuzzyOutput()->setAccumulation(fl::null);
     speed_->setDefuzzifier(new fl::WeightedAverage("TakagiSugeno"));
-    // speed_->addTerm(new fl::Constant("REVERSE", -maxSpeed_));
     speed_->addTerm(new fl::Constant("SLOW", maxSpeed_ / 2));
     speed_->addTerm(new fl::Constant("FAST", maxSpeed_));
     engine_->addOutputVariable(speed_);
 
+
     //=============================== RULES ====================================
+
     // rule block initialization
     ruleBlock_ = new fl::RuleBlock;
 
     // front steering rules
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RBL then FSA is Z", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RL  then FSA is LH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is SL  then FSA is LH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is FL  then FSA is LL", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is FA  then FSA is Z", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is FR  then FSA is RL", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is SR  then FSA is RH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RR  then FSA is RH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RBR then FSA is Z", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is SL then FSA is LH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is FL then FSA is LL", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is FA then FSA is Z", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is FR then FSA is RL", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is SR then FSA is RH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is SL then FSA is RH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is FL then FSA is RL", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is FR then FSA is LH", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is SR then FSA is LL", engine_));
+    BOOST_FOREACH(std::string rule, frontSteeringRules_)
+      ruleBlock_->addRule(fl::Rule::parse(rule, engine_));
 
     // rear steering rules
-    if (rearSteeringMode_ == "crab")
-    {
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is somewhat FA and Ey is BP then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is somewhat FA and Ey is SP then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is somewhat FA and Ey is Z then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is somewhat FA and Ey is SN then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is somewhat FA and Ey is BN then RSA is LH", engine_));
-
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is somewhat FA and Ey is BP then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is somewhat FA and Ey is SP then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is somewhat FA and Ey is Z then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is somewhat FA and Ey is SN then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is somewhat FA and Ey is BN then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Eo is not FA then RSA is Z", engine_));
-    }
-    else if (rearSteeringMode_ == "counter")
-    { // use same rules as in front steering but with opposite steering angle
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RBL then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RL  then RSA is RL", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is SL  then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is FL  then RSA is RL", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is FA  then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is FR  then RSA is LL", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is SR  then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RR  then RSA is LL", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR and Ea is RBR then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is SL then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is FL then RSA is RL", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is FA then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is FR then RSA is LL", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is FW and Eo is SR then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is SL then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is FL then RSA is LL", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is FR then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Ep is CLOSE and Direction is BW and Eo is SR then RSA is RL", engine_));
-    }
-    else if (rearSteeringMode_ == "hybrid")
-    {
-      ruleBlock_->addRule(fl::Rule::parse("if Eo is not FA then RSA is Z", engine_));
-
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is FA and Ey is BP then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is FA and Ey is SP then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is FA and Ey is Z then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is FA and Ey is SN then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW and Eo is FA and Ey is BN then RSA is Z", engine_));
-
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is FA and Ey is BP then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is FA and Ey is SP then RSA is RH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is FA and Ey is Z then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is FA and Ey is SN then RSA is LH", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW and Eo is FA and Ey is BN then RSA is Z", engine_));
-    }
-    else if (rearSteeringMode_ == "none")
-    {
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is FW then RSA is Z", engine_));
-      ruleBlock_->addRule(fl::Rule::parse("if Direction is BW then RSA is Z", engine_));
-    }
-    else
-    {
-      ROS_FATAL("Rear Steering Mode [%s] Unrecognized!", rearSteeringMode_.c_str());
-      exit(EXIT_FAILURE);
-    }
+    BOOST_FOREACH(std::string rule, rearSteeringDeviationRules_)
+      ruleBlock_->addRule(fl::Rule::parse(rule, engine_));
 
     // speed rules
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is FAR then Speed is FAST", engine_));
-    ruleBlock_->addRule(fl::Rule::parse("if Ep is very CLOSE then Speed is SLOW", engine_));
+    BOOST_FOREACH(std::string rule, speedRules_)
+      ruleBlock_->addRule(fl::Rule::parse(rule, engine_));
 
     engine_->addRuleBlock(ruleBlock_);
-    engine_->configure("Minimum", "Maximum", "Minimum", "Maximum", "WeightedAverage");
+    engine_->configure(
+      "Minimum", "Maximum", "Minimum", "Maximum", "WeightedAverage");
 
     std::string status;
     if (!engine_->isReady(&status))
@@ -396,16 +376,15 @@ namespace rsband_local_planner
     double fsa = deg2rad(frontSteeringAngle_->getOutputValue());  // front steering angle
 
     double rsa;  // rear steering angle
-    if (rearSteeringMode_ == "crab"
-      || rearSteeringMode_ == "counter"
-      || rearSteeringMode_ == "none")
-    {
-      rsa = deg2rad(rearSteeringAngle_->getOutputValue());
-    }
+
+    if (rearSteeringMode_ == "none")
+      rsa = 0.0;
+    else if (rearSteeringMode_ == "counter")
+      rsa = -fsa;
+    else if (rearSteeringMode_ == "crab")
+      rsa = deg2rad(rearSteeringDeviationAngle_->getOutputValue());
     else if (rearSteeringMode_ == "hybrid")
-    {
-      rsa = - (fsa + deg2rad(rearSteeringAngle_->getOutputValue()));
-    }
+      rsa = -fsa + deg2rad(rearSteeringDeviationAngle_->getOutputValue());
     else
     { // it should never come here
       ROS_FATAL("Invalid Steering Mode. Exiting...");
