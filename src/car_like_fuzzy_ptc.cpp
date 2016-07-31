@@ -88,6 +88,7 @@ namespace rsband_local_planner
     pnh_->param("updateSubGoalDistThreshold", updateSubGoalDistThreshold_, 0.4);
     pnh_->param("xy_goal_tolerance", xyGoalTolerance_, 0.25);
     pnh_->param("yaw_goal_tolerance", yawGoalTolerance_, 0.1);
+    pnh_->param("goal_dist_threshold", goalDistThreshold_, 0.2);
     pnh_->param("lateral_deviation_tolerance", latDevTolerance_, 0.2);
     pnh_->param<std::string>("rear_steering_mode", rearSteeringMode_, "none");
     pnh_->param<bool>("display_controller_io", displayControllerIO_, false);
@@ -242,8 +243,8 @@ namespace rsband_local_planner
     positionError_->setEnabled(true);
     positionError_->setName("Ep");
     positionError_->setRange(0.0, std::numeric_limits<double>::infinity());
-    positionError_->addTerm(new fl::Trapezoid("CLOSE", 0.0, 0.0, xyGoalTolerance_, 2 * xyGoalTolerance_));
-    positionError_->addTerm(new fl::Ramp("FAR", xyGoalTolerance_, 2 * xyGoalTolerance_));
+    positionError_->addTerm(new fl::Trapezoid("CLOSE", 0.0, 0.0, goalDistThreshold_, 2 * goalDistThreshold_));
+    positionError_->addTerm(new fl::Ramp("FAR", goalDistThreshold_, 2 * goalDistThreshold_));
     engine_->addInputVariable(positionError_);
 
     // lateral deviation error input variable initialization

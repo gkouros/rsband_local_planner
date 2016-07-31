@@ -203,6 +203,8 @@ namespace rsband_local_planner
       double xyGoalTolerance_;
       //! yaw goal tolerance
       double yawGoalTolerance_;
+      //! distance to goal threshold
+      double goalDistThreshold_;
       //! lateral deviation tolerance
       double latDevTolerance_;
       //! subGoal step
