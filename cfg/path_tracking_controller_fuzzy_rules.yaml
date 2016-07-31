@@ -1,3 +1,35 @@
+# Fuzzy Rules of car like path tracking controller
+# ================================================
+#
+# Input Variables:
+# - Ep: distance between robot and goal
+# - Eo: orientation error between robot pose and goal pose
+# - Ea: angle between robot and line connecting it to goal
+# - Ey: lateral distance to goal
+#
+# Output Variables:
+# - speed: the speed of the robot
+# - fsa: the front steering angle of the robot
+# - rsda: rear steering deviation angle, used in crab and hybrid steering modes
+#
+# Membership Functions:
+#   - Ea MFs: RBL, RL, SL, FL, FA, FR, SR, RR, RBR
+#   - Eo MFs: RBL, RL, SL, FL, FA, FR, SR, RR, RBR
+#       (F=front, A=ahead, R=Rear, B=back, L=left, second R=right)
+#   - Ep MFs: CLOSE, FAR
+#   - Ey MFs: NB, NS, Z, PS, PS (P=positive, N=negative, Z=zero, S=small, B=big)
+#   - speed: SLOW, FAST
+#   - fsa MFs:: LH, LL, Z, RL, RH
+#   - rsa MFs:
+#      (L1=left, R1=right, L2=LOW, H=high, Z=zero)
+#   - Direction MFs: FW (forwards), BW (backwards)
+#
+# Rear Steering Modes:
+# - none mode: rear_steering_angle = 0
+# - counter mode: rear_steering_angle = -front_steering_angle
+# - crab mode: rear_steering_angle = rear_steering_deviation_angle
+# - hybrid mode: rear_steering_angle = -front_steering_angle + rear_steering_deviation_angle
+
 fuzzy_rules:
   speed_rules:
     - "if Ep is CLOSE then Speed is SLOW"
@@ -7,26 +39,22 @@ fuzzy_rules:
     - "if Ep is FAR and Ea is RBL then FSA is  Z"
     - "if Ep is FAR and Ea is  RL then FSA is LH"
     - "if Ep is FAR and Ea is  SL then FSA is LH"
-    - "if Ep is FAR and Ea is  FL then FSA is LL"
+    - "if Ep is FAR and Ea is  FL then FSA is LH"
     - "if Ep is FAR and Ea is  FA then FSA is  Z"
-    - "if Ep is FAR and Ea is  FR then FSA is RL"
+    - "if Ep is FAR and Ea is  FR then FSA is RH"
     - "if Ep is FAR and Ea is  SR then FSA is RH"
     - "if Ep is FAR and Ea is  RR then FSA is RH"
     - "if Ep is FAR and Ea is RBR then FSA is  Z"
     - "if Ep is CLOSE and Direction is FW and Eo is SL then FSA is LH"
-    - "if Ep is CLOSE and Direction is FW and Eo is FL then FSA is LL"
+    - "if Ep is CLOSE and Direction is FW and Eo is FL then FSA is LH"
     - "if Ep is CLOSE and Direction is FW and Eo is FA then FSA is Z "
-    - "if Ep is CLOSE and Direction is FW and Eo is FR then FSA is RL"
+    - "if Ep is CLOSE and Direction is FW and Eo is FR then FSA is RH"
     - "if Ep is CLOSE and Direction is FW and Eo is SR then FSA is RH"
     - "if Ep is CLOSE and Direction is BW and Eo is SL then FSA is RH"
-    - "if Ep is CLOSE and Direction is BW and Eo is FL then FSA is RL"
+    - "if Ep is CLOSE and Direction is BW and Eo is FL then FSA is RH"
     - "if Ep is CLOSE and Direction is BW and Eo is FR then FSA is LH"
-    - "if Ep is CLOSE and Direction is BW and Eo is SR then FSA is LL"
+    - "if Ep is CLOSE and Direction is BW and Eo is SR then FSA is LH"
 
-# none mode: rear_steering_angle = 0
-# counter mode: rear_steering_angle = -front_steering_angle
-# crab mode: rear_steering_angle = rear_steering_deviation_rules
-# hybrid mode: rear_steering_angle = -front_steering_angle + rear_steering_deviation_rules
   rear_steering_deviation_rules:
     - "if Eo is not FA then RSDA is Z"
     - "if Direction is FW and Eo is somewhat FA and Ey is BP then RSDA is  Z"
