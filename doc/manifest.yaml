@@ -1,0 +1,26 @@
+actions: []
+authors: George Kouros <gkourosg@yahoo.gr>
+brief: ''
+bugtracker: https://github.com/gKouros/rsband_local_planner/issues
+depends:
+- dynamic_reconfigure
+- nav_msgs
+- catkin
+- roscpp
+- costmap_2d
+- pluginlib
+- eband_local_planner
+- ompl
+- nav_core
+- geometry_msgs
+- tf
+- base_local_planner
+- tf_conversions
+description: ROS local planner for car like and 4WS robots
+license: BSD
+maintainers: George Kouros <gkourosg@yahoo.gr>
+msgs: []
+package_type: package
+repo_url: https://github.com/gKouros/rsband_local_planner
+srvs: []
+url: ''
