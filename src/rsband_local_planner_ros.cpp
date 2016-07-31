@@ -107,8 +107,8 @@ namespace rsband_local_planner
   {
     xyGoalTolerance_ = config.xy_goal_tolerance;
     yawGoalTolerance_ = config.yaw_goal_tolerance;
-
     eband2RSStrategy_ = config.eband_to_rs_strategy;
+    mergePlans_ = config.merge_plans;
 
     if (rsPlanner_)
       rsPlanner_->reconfigure(config);
@@ -243,13 +243,17 @@ namespace rsband_local_planner
       localPlan = rsPlan;
 
       // merge rsPlan with the left out waypoints of eband to get rsband plan
-      for (unsigned int i = failIdx+1; i < ebandPlan.size(); i++)
+      if (mergePlans_)
       {
-        geometry_msgs::PoseStamped pose;
-        tfListener_->transformPose(rsPlan.front().header.frame_id,
-          ebandPlan.front().header.stamp, ebandPlan[i], ebandPlan[i].header.frame_id,
-          pose);
-        localPlan.push_back(pose);
+        for (unsigned int i = failIdx+1; i < ebandPlan.size(); i++)
+        {
+          geometry_msgs::PoseStamped pose;
+          tfListener_->transformPose(rsPlan.front().header.frame_id,
+            ebandPlan.front().header.stamp, ebandPlan[i],
+            ebandPlan[i].header.frame_id,
+            pose);
+          localPlan.push_back(pose);
+        }
       }
 
       // publish global, local and rs plans

@@ -151,6 +151,9 @@ namespace rsband_local_planner
       //! eband to reeds shepp band conversion strategy
       unsigned int eband2RSStrategy_;
 
+      //! merge rsband with unconnected eband waypoints
+      bool mergePlans_;
+
       //! global plan publisher
       ros::Publisher globalPlanPub_;
       //! local plan publisher
