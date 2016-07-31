@@ -171,6 +171,7 @@ namespace rsband_local_planner
       /**
        * @brief Checks whether a path waypoint is a cusp point
        * @param path: The path that the controller tracks
+       * @param idx: The point to check if it is a cusp point
        * return true if given path waypoint is a cusp point
        */
       bool isCuspPoint(
@@ -178,67 +179,69 @@ namespace rsband_local_planner
         unsigned int idx);
 
 
-      //!< private ros node handle
+      //! private ros node handle
       ros::NodeHandle* pnh_;
 
-      //!< variable indicating whether the controller has been initialized
+      //! variable indicating whether the controller has been initialized
       bool initialized_;
 
-      //!< publisher of the current sub goal marker
+      //! publisher of the current sub goal marker
       ros::Publisher subGoalPub_;
-      //!< sub goal visualization marker
+      //! sub goal visualization marker
       visualization_msgs::Marker subGoal_;
 
-      //!< rear wheel steering mode (none/counter/crab/hybrid)
+      //! rear wheel steering mode (none/counter/crab/hybrid)
       std::string rearSteeringMode_;
 
-      //!< the robot wheelbase
+      //! the robot wheelbase
       double wheelbase_;
-      //!< the max steering angle of the virtual middle wheel
+      //! the max steering angle of the virtual middle wheel
       double maxSteeringAngle_;
-      //!< max speed
+      //! max speed
       double maxSpeed_;
-      //!< xy goal tolerance threshold
+      //! xy goal tolerance threshold
       double xyGoalTolerance_;
-      //!< yaw goal tolerance
+      //! yaw goal tolerance
       double yawGoalTolerance_;
-      //!< lateral deviation tolerance
+      //! lateral deviation tolerance
       double latDevTolerance_;
-      //!< subGoal step
+      //! subGoal step
       double updateSubGoalDistThreshold_;
-      //!< display current trajectory information
+      //! display current trajectory information
       bool displayControllerIO_;
-      //!< if true controller returns zero velocity commands
+      //! if true controller returns zero velocity commands
       bool stop_;
 
       // fuzzylite related variables
 
-      //!< position FLC engine
+      //! position FLC engine
       fl::Engine* engine_;
 
-      //!< direction (forwards/backwards) input variable
+      //! direction (forwards/backwards) input variable
       fl::InputVariable* direction_;
-      //!< robot to goal direction orientation error input variable
+      //! robot to goal direction orientation error input variable
       fl::InputVariable* angularDeviationError_;
-      //!< robot to final goal orientation error input variable
+      //! robot to final goal orientation error input variable
       fl::InputVariable* orientationError_;
-      //!< robot to goal distance error input variable
+      //! robot to goal distance error input variable
       fl::InputVariable* positionError_;
-      //!< lateral deviation error
+      //! lateral deviation error
       fl::InputVariable* lateralDeviationError_;
-      //!< steering angle output variable 1
+      //! steering angle output variable 1
       fl::OutputVariable* frontSteeringAngle_;
-      //!< rear steering deviation angle output variable
+      //! rear steering deviation angle output variable
       fl::OutputVariable* rearSteeringDeviationAngle_;
-      //!< speed output variable
+      //! speed output variable
       fl::OutputVariable* speed_;
 
-      //!< flc rule block
+      //! flc rule block
       fl::RuleBlock* ruleBlock_;
 
-      // fuzzy rules
+      //! speed rules
       std::vector<std::string> speedRules_;
+      //! front steering rules
       std::vector<std::string> frontSteeringRules_;
+      //! rear steering deviation rules
       std::vector<std::string> rearSteeringDeviationRules_;
 
   };

@@ -122,49 +122,50 @@ namespace rsband_local_planner
       /**
        * @brief Reconfigures node parameters
        * @param config: The dynamic reconfigure node configuration
+       * @param level: reconfiguration level
        */
       void reconfigureCallback(RSBandPlannerConfig& config, uint32_t level);
 
       typedef dynamic_reconfigure::Server<
         rsband_local_planner::RSBandPlannerConfig> drs;
-      //!< dynamic reconfigure server ptr
+      //! dynamic reconfigure server ptr
       boost::shared_ptr<drs> drs_;
 
-      //!< tf transform listener ptr
+      //! tf transform listener ptr
       tf::TransformListener* tfListener_;
-      //!< costmap ROS wrapper ptr
+      //! costmap ROS wrapper ptr
       costmap_2d::Costmap2DROS* costmapROS_;
 
-      //!< eband planner ptr
+      //! eband planner ptr
       boost::shared_ptr<eband_local_planner::EBandPlanner> ebandPlanner_;
-      //!< reeds shepp planner ptr
+      //! reeds shepp planner ptr
       boost::shared_ptr<ReedsSheppPlanner> rsPlanner_;
-      //!< path tracking controller ptr
+      //! path tracking controller ptr
       boost::shared_ptr<CarLikeFuzzyPTC> ptc_;
 
-      //!< distance to goal tolerance
+      //! distance to goal tolerance
       double xyGoalTolerance_;
-      //!< angular deviation from goal pose tolerance
+      //! angular deviation from goal pose tolerance
       double yawGoalTolerance_;
 
-      //!< eband to reeds shepp band conversion strategy
+      //! eband to reeds shepp band conversion strategy
       unsigned int eband2RSStrategy_;
 
-      //!< global plan publisher
+      //! global plan publisher
       ros::Publisher globalPlanPub_;
-      //!< local plan publisher
+      //! local plan publisher
       ros::Publisher localPlanPub_;
-      //!< eband plan publisher
+      //! eband plan publisher
       ros::Publisher ebandPlanPub_;
-      //!< rs plan publisher
+      //! rs plan publisher
       ros::Publisher rsPlanPub_;
 
-      //!< global plan
+      //! global plan
       std::vector<geometry_msgs::PoseStamped> globalPlan_;
-      //!< transformed plan
+      //! transformed plan
       std::vector<geometry_msgs::PoseStamped> transformedPlan_;
 
-      //!< eband plan start and end indexes regarding global plan
+      //! eband plan start and end indexes regarding global plan
       std::vector<int> planStartEndCounters_;
 
       bool initialized_;

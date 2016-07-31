@@ -73,7 +73,7 @@ namespace rsband_local_planner
         tf::TransformListener* tfListener);
 
       /**
-       * @bfief Destructor
+       * @brief Destructor
        */
       ~ReedsSheppPlanner();
 
@@ -97,7 +97,7 @@ namespace rsband_local_planner
       /**
        * @brief Plans a Reeds-Shepp path between the start and end poses
        * @param startPose: The start pose of the path
-       * @param endPose: The final pose of the path
+       * @param goalPose: The final pose of the path
        * @param path: The Reeds-Shepp path that will be returned
        * @return true if planning succeeds
        */
@@ -198,52 +198,52 @@ namespace rsband_local_planner
 
     private:
 
-      //!< The ompl Reeds-Sheep state space
+      //! The ompl Reeds-Sheep state space
       ompl::base::StateSpacePtr reedsSheppStateSpace_;
-      //!< OMPL geometric simple setup object
+      //! OMPL geometric simple setup object
       ompl::geometric::SimpleSetupPtr simpleSetup_;
-      //!< planner space boundaries (should match local costmap boundaries)
+      //! planner space boundaries (should match local costmap boundaries)
       ompl::base::RealVectorBounds bounds_;
 
-      //!< ptr to costmap
+      //! ptr to costmap
       costmap_2d::Costmap2D* costmap_;
-      //!< ptr to costmap ros wrapper
+      //! ptr to costmap ros wrapper
       costmap_2d::Costmap2DROS* costmapROS_;
-      //!< ptr to costmap model
+      //! ptr to costmap model
       base_local_planner::CostmapModel* costmapModel_;
-      //!< robot footprint, used in validity checking
+      //! robot footprint, used in validity checking
       std::vector<geometry_msgs::Point> footprint_;
 
-      //!< tf transform listener
+      //! tf transform listener
       tf::TransformListener* tfListener_;
 
-      //!< the reference frame of the robot base
+      //! the reference frame of the robot base
       std::string robotFrame_;
-      //!< the reference frame of the costmap
+      //! the reference frame of the costmap
       std::string globalFrame_;
 
-      //!< the stamp to use in path poses
+      //! the stamp to use in path poses
       ros::Time stamp_;
 
-      //!< minimum turning radius of the robot (dependent on rear steering mode)
+      //! minimum turning radius of the robot (dependent on rear steering mode)
       double minTurningRadius_;
-      //!< maximum Reeds-Shepp planning duration
+      //! maximum Reeds-Shepp planning duration
       double maxPlanningDuration_;
-      //!< number of poses to interpolate in the reeds shepp path
+      //! number of poses to interpolate in the reeds shepp path
       int interpolationNumPoses_;
-      //!< below this cost, a state is considered valid
+      //! below this cost, a state is considered valid
       int validStateMaxCost_;
-      //!< if true considers unknown costmap cells as free
+      //! if true considers unknown costmap cells as free
       bool allowUnknown_;
-      //!< display planning information
+      //! display planning information
       bool displayPlannerOutput_;
 
-      //!< boundary size x
+      //! boundary size x
       double bx_;
-      //!< boundary size y
+      //! boundary size y
       double by_;
 
-      //!< set if planner is initialized
+      //! set if planner is initialized
       bool initialized_;
   };
 
