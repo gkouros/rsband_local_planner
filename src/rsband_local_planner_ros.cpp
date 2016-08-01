@@ -236,7 +236,7 @@ namespace rsband_local_planner
       }
       if (!failIdx)
       {
-        ROS_ERROR("Failed to get reeds shepp plan");
+        ROS_WARN_THROTTLE(2.0, "Failed to get reeds shepp plan");
         return false;
       }
 
