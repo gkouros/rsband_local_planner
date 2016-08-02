@@ -120,6 +120,15 @@ namespace rsband_local_planner
       bool updateEBand();
 
       /**
+       * @brief Attempts an emergency plan in case actual plan failed
+       * @param ebandPlan: the eband plan
+       * @param emergencyPlan: the emergency plan container
+       * @return true if emergency planning succeeds
+       */
+      bool emergencyPlan(std::vector<geometry_msgs::PoseStamped>& ebandPlan,
+        std::vector<geometry_msgs::PoseStamped>& emergencyPlan);
+
+      /**
        * @brief Reconfigures node parameters
        * @param config: The dynamic reconfigure node configuration
        * @param level: reconfiguration level

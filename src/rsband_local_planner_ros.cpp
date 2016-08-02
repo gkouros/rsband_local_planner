@@ -234,10 +234,16 @@ namespace rsband_local_planner
           ROS_ERROR("Invalid eband_to_rs_strategy!");
           exit(EXIT_FAILURE);
       }
+
       if (!failIdx)
       {
-        ROS_WARN_THROTTLE(2.0, "Failed to get reeds shepp plan");
-        return false;
+        ROS_DEBUG("Failed to get reeds shepp plan. Attempting "
+          "emergency planning...");
+        if (!emergencyPlan(ebandPlan, rsPlan))
+        {
+          ROS_DEBUG("Failed to convert eband to rsband plan!");
+          return false;
+        }
       }
 
       localPlan = rsPlan;
@@ -384,6 +390,24 @@ namespace rsband_local_planner
 
     return true;
   }
+
+
+  bool RSBandPlannerROS::emergencyPlan(
+    std::vector<geometry_msgs::PoseStamped>& ebandPlan,
+    std::vector<geometry_msgs::PoseStamped>& emergencyPlan)
+  {
+    std::vector<geometry_msgs::PoseStamped> tmpPlan(2, ebandPlan[0]);
+    tmpPlan.push_back(ebandPlan[1]);
+
+    // interpolate orientation between robot position and target position
+    interpolateOrientations(tmpPlan);
+
+    if (rsPlanner_->planPath(tmpPlan[0], tmpPlan[1], emergencyPlan))
+      return true;
+    else
+      return false;
+  }
+
 
   void RSBandPlannerROS::interpolateOrientations(
     std::vector<geometry_msgs::PoseStamped>& plan)
