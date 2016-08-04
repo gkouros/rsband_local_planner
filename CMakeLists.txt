@@ -20,7 +20,7 @@ find_package(OMPL REQUIRED)
 
 include_directories(
   include
-  ${Eigen_INCLUDE_DIRS}
+  /usr/local/lib
   ${OMPL_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
