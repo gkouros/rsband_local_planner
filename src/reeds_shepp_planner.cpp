@@ -93,7 +93,8 @@ namespace rsband_local_planner
       globalFrame_ = costmapROS_->getGlobalFrameID();
 
       // initialize the state space boundary
-      setBoundaries(costmap_->getSizeInMetersX(), costmap_->getSizeInMetersY());
+      setBoundaries(costmap_->getSizeInMetersX() + 0.02,
+        costmap_->getSizeInMetersY() + 0.02);
     }
     else
     {
@@ -127,10 +128,10 @@ namespace rsband_local_planner
   {
     bx_ = bx;
     by_ = by;
-    bounds_.low[0] = -by_ / 2 - 0.1;
-    bounds_.low[1] = -bx_ / 2 - 0.1;
-    bounds_.high[0] = by_ / 2 + 0.1;
-    bounds_.high[1] = bx_ / 2 + 0.1;
+    bounds_.low[0] = -by_ / 2;
+    bounds_.low[1] = -bx_ / 2;
+    bounds_.high[0] = by_ / 2;
+    bounds_.high[1] = bx_ / 2;
     reedsSheppStateSpace_->as<ompl::base::SE2StateSpace>()->setBounds(bounds_);
   }
 
@@ -192,9 +193,6 @@ namespace rsband_local_planner
     geometry_msgs::PoseStamped statePose;
     state2pose(s, statePose);
 
-    if (fabs(s->getX()) < 5e-2 && fabs(s->getY()) < 5e-2)
-      return true;
-
     transform(statePose, statePose, globalFrame_);
 
     uint8_t cost = costmapModel_->footprintCost(
@@ -235,7 +233,7 @@ namespace rsband_local_planner
     ompl::base::SpaceInformationPtr si(simpleSetup_->getSpaceInformation());
     simpleSetup_->setStateValidityChecker(
       boost::bind(&ReedsSheppPlanner::isStateValid, this, si.get(), _1));
-
+    si->setStateValidityCheckingResolution(0.05);
 
     stamp_ = startPose.header.stamp;
 
@@ -355,5 +353,7 @@ namespace rsband_local_planner
 
     return 0;
   }
+
+
 
 }  // namespace rsband_local_planner
