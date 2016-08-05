@@ -215,17 +215,21 @@ namespace rsband_local_planner
       int failIdx;
       switch (eband2RSStrategy_)
       {
-        case 0:  // start to end planning strategy
+        case 0:  // start to next planning strategy
           failIdx = ebandPlan.size() * rsPlanner_->planPath(
               ebandPlan.front(), ebandPlan.back(), rsPlan);
           break;
-        case 1:  // point to point planning strategy until failure
+        case 1:  // start to first waypoint planning strategy
+          failIdx = ebandPlan.size() * rsPlanner_->planPath(
+              ebandPlan.front(), *(ebandPlan.begin()+1), rsPlan);
+          break;
+        case 2:  // point to point planning strategy until failure
           failIdx = rsPlanner_->planPathUntilFailure(ebandPlan, rsPlan);
           break;
-        case 2:  // point to point planning strategy that skips failures
+        case 3:  // point to point planning strategy that skips failures
           failIdx = rsPlanner_->planPathSkipFailures(ebandPlan, rsPlan);
           break;
-        case 3:  // receding end planning strategy
+        case 4:  // receding end planning strategy
           // plan path between start and end of eband and if it fails, decrement
           // end of eband and try again, until a solution or start is reached
           failIdx = rsPlanner_->planRecedingPath(ebandPlan, rsPlan);
