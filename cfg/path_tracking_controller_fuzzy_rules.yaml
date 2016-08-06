@@ -56,14 +56,44 @@ fuzzy_rules:
     - "if Ep is CLOSE and Direction is BW and Eo is SR then FSA is LH"
 
   rear_steering_deviation_rules:
-    - "if Eo is not FA then RSDA is Z"
-    - "if Direction is FW and Eo is somewhat FA and Ey is BP then RSDA is  Z"
-    - "if Direction is FW and Eo is somewhat FA and Ey is SP then RSDA is LH"
-    - "if Direction is FW and Eo is somewhat FA and Ey is  Z then RSDA is  Z"
-    - "if Direction is FW and Eo is somewhat FA and Ey is SN then RSDA is RH"
-    - "if Direction is FW and Eo is somewhat FA and Ey is BN then RSDA is  Z"
-    - "if Direction is BW and Eo is somewhat FA and Ey is BP then RSDA is  Z"
-    - "if Direction is BW and Eo is somewhat FA and Ey is SP then RSDA is LH"
-    - "if Direction is BW and Eo is somewhat FA and Ey is  Z then RSDA is  Z"
-    - "if Direction is BW and Eo is somewhat FA and Ey is SN then RSDA is RH"
-    - "if Direction is BW and Eo is somewhat FA and Ey is BN then RSDA is  Z"
+    - "if Eo is not FA and Eo is not FR and Eo is not FL then RSDA is Z"
+
+    - "if Direction is FW and Eo is FA and Ey is BP then RSDA is  Z"
+    - "if Direction is FW and Eo is FL and Ey is BP then RSDA is  Z"
+    - "if Direction is FW and Eo is FR and Ey is BP then RSDA is  Z"
+
+    - "if Direction is FW and Eo is FA and Ey is SP then RSDA is LH"
+    - "if Direction is FW and Eo is FL and Ey is SP then RSDA is LH"
+    - "if Direction is FW and Eo is FR and Ey is SP then RSDA is LH"
+
+    - "if Direction is FW and Eo is FA and Ey is  Z then RSDA is  Z"
+    - "if Direction is FW and Eo is FL and Ey is  Z then RSDA is  Z"
+    - "if Direction is FW and Eo is FR and Ey is  Z then RSDA is  Z"
+
+    - "if Direction is FW and Eo is FA and Ey is SN then RSDA is RH"
+    - "if Direction is FW and Eo is FL and Ey is SN then RSDA is RH"
+    - "if Direction is FW and Eo is FR and Ey is SN then RSDA is RH"
+
+    - "if Direction is FW and Eo is FA and Ey is BN then RSDA is  Z"
+    - "if Direction is FW and Eo is FL and Ey is BN then RSDA is  Z"
+    - "if Direction is FW and Eo is FR and Ey is BN then RSDA is  Z"
+
+    - "if Direction is BW and Eo is FA and Ey is BP then RSDA is  Z"
+    - "if Direction is BW and Eo is FL and Ey is BP then RSDA is  Z"
+    - "if Direction is BW and Eo is FR and Ey is BP then RSDA is  Z"
+
+    - "if Direction is BW and Eo is FA and Ey is SP then RSDA is LH"
+    - "if Direction is BW and Eo is FL and Ey is SP then RSDA is LH"
+    - "if Direction is BW and Eo is FR and Ey is SP then RSDA is LH"
+
+    - "if Direction is BW and Eo is FA and Ey is  Z then RSDA is  Z"
+    - "if Direction is BW and Eo is FL and Ey is  Z then RSDA is  Z"
+    - "if Direction is BW and Eo is FR and Ey is  Z then RSDA is  Z"
+
+    - "if Direction is BW and Eo is FA and Ey is SN then RSDA is RH"
+    - "if Direction is BW and Eo is FL and Ey is SN then RSDA is RH"
+    - "if Direction is BW and Eo is FR and Ey is SN then RSDA is RH"
+
+    - "if Direction is BW and Eo is FA and Ey is BN then RSDA is  Z"
+    - "if Direction is BW and Eo is FL and Ey is BN then RSDA is  Z"
+    - "if Direction is BW and Eo is FR and Ey is BN then RSDA is  Z"
