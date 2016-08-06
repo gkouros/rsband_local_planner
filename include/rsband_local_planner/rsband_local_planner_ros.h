@@ -163,6 +163,9 @@ namespace rsband_local_planner
       //! merge rsband with unconnected eband waypoints
       bool mergePlans_;
 
+      //!< determines whether emergency planning will be used in case of failure
+      bool emergencyPlanning_;
+
       //! global plan publisher
       ros::Publisher globalPlanPub_;
       //! local plan publisher
