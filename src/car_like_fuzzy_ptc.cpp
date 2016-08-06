@@ -392,6 +392,9 @@ namespace rsband_local_planner
       exit(EXIT_FAILURE);
     }
 
+    // clamp rsa in case -fsa+rsda exceeds limits
+    rsa = std::min(maxSteeringAngle_, std::max(-maxSteeringAngle_, rsa));
+
     double beta = atan((tan(fsa) + tan(rsa)) / 2);  // angle between vel.x and vel.y
 
     // create command
