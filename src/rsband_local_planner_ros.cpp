@@ -109,6 +109,7 @@ namespace rsband_local_planner
     yawGoalTolerance_ = config.yaw_goal_tolerance;
     eband2RSStrategy_ = config.eband_to_rs_strategy;
     mergePlans_ = config.merge_plans;
+    emergencyPlanning_ = config.emergency_planning;
 
     if (rsPlanner_)
       rsPlanner_->reconfigure(config);
@@ -215,14 +216,28 @@ namespace rsband_local_planner
       int failIdx;
       switch (eband2RSStrategy_)
       {
-        case 0:  // start to next planning strategy
+        case 0:  // start to end planning strategy
           failIdx = ebandPlan.size() * rsPlanner_->planPath(
               ebandPlan.front(), ebandPlan.back(), rsPlan);
           break;
-        case 1:  // start to first waypoint planning strategy
+        case 1:  // start to next waypoint planning strategy
+        {
+          int next = 1;
+          while (next < ebandPlan.size()-1)
+          {
+            double dist = hypot(ebandPlan[0].pose.position.x - ebandPlan[next].pose.position.x,
+              ebandPlan[0].pose.position.y - ebandPlan[next].pose.position.y);
+            double dyaw = fabs(tf::getYaw(ebandPlan[0].pose.orientation) -
+              tf::getYaw(ebandPlan[next].pose.orientation));
+            if (dist < xyGoalTolerance_ && dyaw < yawGoalTolerance_)
+              next++;
+            else
+              break;
+          }
           failIdx = ebandPlan.size() * rsPlanner_->planPath(
-              ebandPlan.front(), *(ebandPlan.begin()+1), rsPlan);
+            ebandPlan.front(), *(ebandPlan.begin()+next), rsPlan);
           break;
+        }
         case 2:  // point to point planning strategy until failure
           failIdx = rsPlanner_->planPathUntilFailure(ebandPlan, rsPlan);
           break;
@@ -243,7 +258,11 @@ namespace rsband_local_planner
       {
         ROS_DEBUG("Failed to get reeds shepp plan. Attempting "
           "emergency planning...");
-        if (!emergencyPlan(ebandPlan, rsPlan))
+        if (emergencyPlanning_ && emergencyPlan(ebandPlan, rsPlan))
+        {
+          ROS_DEBUG("Emergency Planning succeeded!");
+        }
+        else
         {
           ROS_DEBUG("Failed to convert eband to rsband plan!");
           return false;
