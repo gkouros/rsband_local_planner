@@ -20,7 +20,6 @@ find_package(OMPL REQUIRED)
 
 include_directories(
   include
-  /usr/local/lib
   ${OMPL_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
@@ -43,6 +42,8 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
 )
+
+link_directories(/usr/local/lib ${catkin_INCLUDE_DIRS})
 
 # build the library
 add_library(${PROJECT_NAME}
