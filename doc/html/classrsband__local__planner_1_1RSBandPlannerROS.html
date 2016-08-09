@@ -77,6 +77,9 @@ dynamic_reconfigure::Server<br class="typebreak"/>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
+<tr class="memitem:a32d619a483c41bd6b1829af58a7a2d85"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1RSBandPlannerROS.html#a32d619a483c41bd6b1829af58a7a2d85">emergencyPlan</a> (std::vector&lt; geometry_msgs::PoseStamped &gt; &amp;ebandPlan, std::vector&lt; geometry_msgs::PoseStamped &gt; &amp;emergencyPlan)</td></tr>
+<tr class="memdesc:a32d619a483c41bd6b1829af58a7a2d85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attempts an emergency plan in case actual plan failed.  <a href="#a32d619a483c41bd6b1829af58a7a2d85">More...</a><br/></td></tr>
+<tr class="separator:a32d619a483c41bd6b1829af58a7a2d85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa568be23fc6f7eb3bee144328d029e29"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1RSBandPlannerROS.html#aa568be23fc6f7eb3bee144328d029e29">interpolateOrientations</a> (std::vector&lt; geometry_msgs::PoseStamped &gt; &amp;plan)</td></tr>
 <tr class="memdesc:aa568be23fc6f7eb3bee144328d029e29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interpolates pose orientations of the given plan.  <a href="#aa568be23fc6f7eb3bee144328d029e29">More...</a><br/></td></tr>
 <tr class="separator:aa568be23fc6f7eb3bee144328d029e29"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -105,6 +108,8 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a65897f044e87e8a3d68e304a3ddd81c5"><td class="memItemLeft" align="right" valign="top">ros::Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1RSBandPlannerROS.html#a65897f044e87e8a3d68e304a3ddd81c5">ebandPlanPub_</a></td></tr>
 <tr class="memdesc:a65897f044e87e8a3d68e304a3ddd81c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">eband plan publisher  <a href="#a65897f044e87e8a3d68e304a3ddd81c5">More...</a><br/></td></tr>
 <tr class="separator:a65897f044e87e8a3d68e304a3ddd81c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a358b1eaffc4cd6af960c11f85ce7cf50"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1RSBandPlannerROS.html#a358b1eaffc4cd6af960c11f85ce7cf50">emergencyPlanning_</a></td></tr>
+<tr class="separator:a358b1eaffc4cd6af960c11f85ce7cf50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac95deae25adb4fce4935bf7cb155f1a"><td class="memItemLeft" align="right" valign="top">std::vector<br class="typebreak"/>
 &lt; geometry_msgs::PoseStamped &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1RSBandPlannerROS.html#aac95deae25adb4fce4935bf7cb155f1a">globalPlan_</a></td></tr>
 <tr class="memdesc:aac95deae25adb4fce4935bf7cb155f1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">global plan  <a href="#aac95deae25adb4fce4935bf7cb155f1a">More...</a><br/></td></tr>
@@ -117,6 +122,9 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a85f990338ea67abc9687b1ef520c4011"><td class="memItemLeft" align="right" valign="top">ros::Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1RSBandPlannerROS.html#a85f990338ea67abc9687b1ef520c4011">localPlanPub_</a></td></tr>
 <tr class="memdesc:a85f990338ea67abc9687b1ef520c4011"><td class="mdescLeft">&#160;</td><td class="mdescRight">local plan publisher  <a href="#a85f990338ea67abc9687b1ef520c4011">More...</a><br/></td></tr>
 <tr class="separator:a85f990338ea67abc9687b1ef520c4011"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1b39051a24700c53ded7b5bebfa0720"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1RSBandPlannerROS.html#ac1b39051a24700c53ded7b5bebfa0720">mergePlans_</a></td></tr>
+<tr class="memdesc:ac1b39051a24700c53ded7b5bebfa0720"><td class="mdescLeft">&#160;</td><td class="mdescRight">merge rsband with unconnected eband waypoints  <a href="#ac1b39051a24700c53ded7b5bebfa0720">More...</a><br/></td></tr>
+<tr class="separator:ac1b39051a24700c53ded7b5bebfa0720"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab82bb43c09e04790f8918c53c1164f52"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1RSBandPlannerROS.html#ab82bb43c09e04790f8918c53c1164f52">planStartEndCounters_</a></td></tr>
 <tr class="memdesc:ab82bb43c09e04790f8918c53c1164f52"><td class="mdescLeft">&#160;</td><td class="mdescRight">eband plan start and end indexes regarding global plan  <a href="#ab82bb43c09e04790f8918c53c1164f52">More...</a><br/></td></tr>
 <tr class="separator:ab82bb43c09e04790f8918c53c1164f52"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -169,7 +177,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00130">130</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00139">139</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -189,7 +197,7 @@ Private Attributes</h2></td></tr>
 
 <p>Constructor. </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00049">49</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00050">50</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
 
 </div>
 </div>
@@ -208,7 +216,7 @@ Private Attributes</h2></td></tr>
 
 <p>Destructor. </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00054">54</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00055">55</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
 
 </div>
 </div>
@@ -236,7 +244,53 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if a cmd was computed successfully </dd></dl>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00175">175</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00177">177</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a32d619a483c41bd6b1829af58a7a2d85"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool rsband_local_planner::RSBandPlannerROS::emergencyPlan </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; geometry_msgs::PoseStamped &gt; &amp;&#160;</td>
+          <td class="paramname"><em>ebandPlan</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; geometry_msgs::PoseStamped &gt; &amp;&#160;</td>
+          <td class="paramname"><em>emergencyPlan</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Attempts an emergency plan in case actual plan failed. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ebandPlan</td><td>the eband plan </td></tr>
+    <tr><td class="paramname">emergencyPlan</td><td>the emergency plan container </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if emergency planning succeeds </dd></dl>
+
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00435">435</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
 
 </div>
 </div>
@@ -280,7 +334,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00059">59</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00060">60</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
 
 </div>
 </div>
@@ -314,7 +368,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00384">384</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00468">468</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
 
 </div>
 </div>
@@ -334,7 +388,7 @@ Private Attributes</h2></td></tr>
 <p>Checks whether the goal is reached. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if goal is reached </dd></dl>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00272">272</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00322">322</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
 
 </div>
 </div>
@@ -379,7 +433,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00105">105</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00106">106</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
 
 </div>
 </div>
@@ -406,7 +460,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if plan was set successfully </dd></dl>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00127">127</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00129">129</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
 
 </div>
 </div>
@@ -435,7 +489,7 @@ Private Attributes</h2></td></tr>
 <p>Prunes the eband and adds new target frames </p>
 <dl class="section return"><dt>Returns</dt><dd>true if eband was updated successfully </dd></dl>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00304">304</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8cpp_source.html#l00354">354</a> of file <a class="el" href="rsband__local__planner__ros_8cpp_source.html">rsband_local_planner_ros.cpp</a>.</p>
 
 </div>
 </div>
@@ -460,7 +514,7 @@ Private Attributes</h2></td></tr>
 
 <p>costmap ROS wrapper ptr </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00137">137</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00146">146</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -484,7 +538,7 @@ Private Attributes</h2></td></tr>
 
 <p>dynamic reconfigure server ptr </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00132">132</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00141">141</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -508,7 +562,7 @@ Private Attributes</h2></td></tr>
 
 <p>eband to reeds shepp band conversion strategy </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00152">152</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00161">161</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -532,7 +586,7 @@ Private Attributes</h2></td></tr>
 
 <p>eband planner ptr </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00140">140</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00149">149</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -556,7 +610,29 @@ Private Attributes</h2></td></tr>
 
 <p>eband plan publisher </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00159">159</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00174">174</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a358b1eaffc4cd6af960c11f85ce7cf50"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool rsband_local_planner::RSBandPlannerROS::emergencyPlanning_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00167">167</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -580,7 +656,7 @@ Private Attributes</h2></td></tr>
 
 <p>global plan </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00164">164</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00179">179</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -604,7 +680,7 @@ Private Attributes</h2></td></tr>
 
 <p>global plan publisher </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00155">155</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00170">170</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -626,7 +702,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00171">171</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00186">186</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -650,7 +726,32 @@ Private Attributes</h2></td></tr>
 
 <p>local plan publisher </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00157">157</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00172">172</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ac1b39051a24700c53ded7b5bebfa0720"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool rsband_local_planner::RSBandPlannerROS::mergePlans_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>merge rsband with unconnected eband waypoints </p>
+<p>determines whether emergency planning will be used in case of failure </p>
+
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00164">164</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -674,7 +775,7 @@ Private Attributes</h2></td></tr>
 
 <p>eband plan start and end indexes regarding global plan </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00169">169</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00184">184</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -698,7 +799,7 @@ Private Attributes</h2></td></tr>
 
 <p>path tracking controller ptr </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00144">144</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00153">153</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -722,7 +823,7 @@ Private Attributes</h2></td></tr>
 
 <p>reeds shepp planner ptr </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00142">142</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00151">151</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -746,7 +847,7 @@ Private Attributes</h2></td></tr>
 
 <p>rs plan publisher </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00161">161</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00176">176</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -770,7 +871,7 @@ Private Attributes</h2></td></tr>
 
 <p>tf transform listener ptr </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00135">135</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00144">144</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -794,7 +895,7 @@ Private Attributes</h2></td></tr>
 
 <p>transformed plan </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00166">166</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00181">181</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -818,7 +919,7 @@ Private Attributes</h2></td></tr>
 
 <p>distance to goal tolerance </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00147">147</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00156">156</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -842,7 +943,7 @@ Private Attributes</h2></td></tr>
 
 <p>angular deviation from goal pose tolerance </p>
 
-<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00149">149</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
+<p>Definition at line <a class="el" href="rsband__local__planner__ros_8h_source.html#l00158">158</a> of file <a class="el" href="rsband__local__planner__ros_8h_source.html">rsband_local_planner_ros.h</a>.</p>
 
 </div>
 </div>
@@ -856,7 +957,7 @@ Private Attributes</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/rsband_local_planner">rsband_local_planner</a><br />
 Author(s): George Kouros <gkourosg@yahoo.gr></br />
-<small>autogenerated on Sun Jul 31 2016 17:15:47</small>
+<small>autogenerated on Tue Aug 9 2016 23:25:50</small>
 </div>
 </body>
 </html>
