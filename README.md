@@ -18,3 +18,6 @@ $ cmake ..
 $ make
 $ sudo make install
 ```
+
+#### [Documentation](https://gkouros.github.io/rsband_local_planner/doc/html/index.html)
+
