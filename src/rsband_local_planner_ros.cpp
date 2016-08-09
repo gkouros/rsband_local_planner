@@ -254,7 +254,13 @@ namespace rsband_local_planner
           exit(EXIT_FAILURE);
       }
 
-      if (!failIdx)
+      // calculate orientation error between robot and first eband target pose
+      double dyaw = fabs(tf::getYaw(ebandPlan[1].pose.orientation)
+        - tf::getYaw(ebandPlan[0].pose.orientation));
+
+      // if reeds shepp planning failed or there is orientation error > π/4
+      // attempt emergency planning to reach target orientation (if enabled)
+      if (emergencyPlanning_ && (failIdx == 0 || dyaw > M_PI/4))
       {
         ROS_DEBUG("Failed to get reeds shepp plan. Attempting "
           "emergency planning...");
@@ -264,11 +270,17 @@ namespace rsband_local_planner
         }
         else
         {
-          ROS_DEBUG("Failed to convert eband to rsband plan!");
+          ROS_DEBUG("Emergency Planning failed!");
           return false;
         }
       }
+      else if (!failIdx)
+      {
+          ROS_DEBUG("Failed to convert eband to rsband plan!");
+          return false;
+      }
 
+      // set reeds shepp plan as local plan
       localPlan = rsPlan;
 
       // merge rsPlan with the left out waypoints of eband to get rsband plan
@@ -425,10 +437,25 @@ namespace rsband_local_planner
     // interpolate orientation between robot position and target position
     interpolateOrientations(tmpPlan);
 
-    if (rsPlanner_->planPath(tmpPlan[0], tmpPlan[1], emergencyPlan))
-      return true;
-    else
-      return false;
+    double dyaw =  tf::getYaw(tmpPlan[2].pose.orientation)
+      - tf::getYaw(tmpPlan[0].pose.orientation);
+
+    // attempt to plan path, so as to remain in the same position, but
+    // attain the orientation of the first eband target pose
+    bool success = false;
+    for (int i = 1; i < 4; i++)
+    {
+      tmpPlan[1].pose.orientation = tf::createQuaternionMsgFromYaw(
+        tf::getYaw(tmpPlan[0].pose.orientation) + dyaw / 2 / i);
+
+      if (rsPlanner_->planPath(tmpPlan[0], tmpPlan[1], emergencyPlan))
+      {
+        success = true;
+        break;
+      }
+    }
+
+    return success;
   }
 
 

@@ -190,18 +190,26 @@ namespace rsband_local_planner
     const ompl::base::SE2StateSpace::StateType *s =
       state->as<ompl::base::SE2StateSpace::StateType>();
 
+    // robot pose is always valid
+    if (fabs(s->getX()) < 1e-3 && fabs(s->getY()) < 1e-3
+        && fabs(s->getYaw()) < 0.1)
+      return true;
+
     geometry_msgs::PoseStamped statePose;
     state2pose(s, statePose);
 
     transform(statePose, statePose, globalFrame_);
 
-    uint8_t cost = costmapModel_->footprintCost(
+    int cost = costmapModel_->footprintCost(
       statePose.pose.position.x, statePose.pose.position.y,
       tf::getYaw(statePose.pose.orientation), footprint_);
 
-    // check if state is in collision
-    if (cost > validStateMaxCost_ && cost < 256 - (allowUnknown_?1:0))
+    // check if state is valid
+    if (cost > validStateMaxCost_)
       return false;
+
+    if (cost == -1)
+      return allowUnknown_;
 
     return true;
   }
@@ -233,7 +241,7 @@ namespace rsband_local_planner
     ompl::base::SpaceInformationPtr si(simpleSetup_->getSpaceInformation());
     simpleSetup_->setStateValidityChecker(
       boost::bind(&ReedsSheppPlanner::isStateValid, this, si.get(), _1));
-    si->setStateValidityCheckingResolution(0.05);
+    si->setStateValidityCheckingResolution(costmap_->getResolution());
 
     stamp_ = startPose.header.stamp;
 
@@ -259,7 +267,9 @@ namespace rsband_local_planner
     // set new start and goal states
     simpleSetup_->setStartAndGoalStates(start, goal);
 
-    if (!simpleSetup_->solve(maxPlanningDuration_))
+    simpleSetup_->solve(maxPlanningDuration_);
+
+    if (!simpleSetup_->haveExactSolutionPath())
       return false;
     else
       ROS_DEBUG("[reeds_shepp_planner] Valid plan found");
