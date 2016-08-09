@@ -14,6 +14,7 @@ find_package(catkin REQUIRED
     costmap_2d
     nav_msgs
     geometry_msgs
+    angles
 )
 
 find_package(OMPL REQUIRED)
@@ -39,6 +40,7 @@ catkin_package(
     costmap_2d
     nav_msgs
     geometry_msgs
+    angles
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
 )

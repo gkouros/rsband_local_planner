@@ -27,6 +27,7 @@
   <depend>costmap_2d</depend>
   <depend>geometry_msgs</depend>
   <depend>nav_msgs</depend>
+  <depend>angles</depend>
   <depend>pluginlib</depend>
   <depend>ompl</depend>
 

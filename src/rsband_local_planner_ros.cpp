@@ -39,6 +39,7 @@
 
 #include <base_local_planner/goal_functions.h>
 #include <pluginlib/class_list_macros.h>
+#include <angles/angles.h>
 
 PLUGINLIB_DECLARE_CLASS(rsband_local_planner, RSBandPlannerROS,
   rsband_local_planner::RSBandPlannerROS, nav_core::BaseLocalPlanner);
@@ -225,10 +226,13 @@ namespace rsband_local_planner
           int next = 1;
           while (next < ebandPlan.size()-1)
           {
-            double dist = hypot(ebandPlan[0].pose.position.x - ebandPlan[next].pose.position.x,
+            double dist = hypot(
+              ebandPlan[0].pose.position.x - ebandPlan[next].pose.position.x,
               ebandPlan[0].pose.position.y - ebandPlan[next].pose.position.y);
-            double dyaw = fabs(tf::getYaw(ebandPlan[0].pose.orientation) -
-              tf::getYaw(ebandPlan[next].pose.orientation));
+            double dyaw = fabs(angles::shortest_angular_distance(
+              tf::getYaw(ebandPlan[0].pose.orientation),
+              tf::getYaw(ebandPlan[next].pose.orientation)));
+
             if (dist < xyGoalTolerance_ && dyaw < yawGoalTolerance_)
               next++;
             else
@@ -255,12 +259,13 @@ namespace rsband_local_planner
       }
 
       // calculate orientation error between robot and first eband target pose
-      double dyaw = fabs(tf::getYaw(ebandPlan[1].pose.orientation)
-        - tf::getYaw(ebandPlan[0].pose.orientation));
+      double dyaw = fabs(angles::shortest_angular_distance(
+        tf::getYaw(ebandPlan[0].pose.orientation),
+        tf::getYaw(ebandPlan[1].pose.orientation)));
 
       // if reeds shepp planning failed or there is orientation error > π/4
       // attempt emergency planning to reach target orientation (if enabled)
-      if (emergencyPlanning_ && (failIdx == 0 || dyaw > M_PI/4))
+      if (emergencyPlanning_ && (failIdx == 0 || dyaw > M_PI/3))
       {
         ROS_DEBUG("Failed to get reeds shepp plan. Attempting "
           "emergency planning...");
@@ -437,8 +442,9 @@ namespace rsband_local_planner
     // interpolate orientation between robot position and target position
     interpolateOrientations(tmpPlan);
 
-    double dyaw =  tf::getYaw(tmpPlan[2].pose.orientation)
-      - tf::getYaw(tmpPlan[0].pose.orientation);
+    double dyaw = angles::shortest_angular_distance(
+      tf::getYaw(tmpPlan[0].pose.orientation),
+      tf::getYaw(tmpPlan[2].pose.orientation));
 
     // attempt to plan path, so as to remain in the same position, but
     // attain the orientation of the first eband target pose
@@ -446,7 +452,7 @@ namespace rsband_local_planner
     for (int i = 1; i < 4; i++)
     {
       tmpPlan[1].pose.orientation = tf::createQuaternionMsgFromYaw(
-        tf::getYaw(tmpPlan[0].pose.orientation) + dyaw / 2 / i);
+          tf::getYaw(tmpPlan[0].pose.orientation) + dyaw / 2 / i);
 
       if (rsPlanner_->planPath(tmpPlan[0], tmpPlan[1], emergencyPlan))
       {
