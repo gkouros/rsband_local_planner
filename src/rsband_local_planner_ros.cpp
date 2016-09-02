@@ -209,9 +209,6 @@ namespace rsband_local_planner
       // interpolate orientations of eband plan
       interpolateOrientations(ebandPlan);
 
-      // publish eband plan
-      base_local_planner::publishPlan(ebandPlan, ebandPlanPub_);
-
       // use reeds shepp planner to connect eband waypoints using RS paths
       // select between the available eband to reeds shepp conversion strategies
       int failIdx;
@@ -223,23 +220,22 @@ namespace rsband_local_planner
           break;
         case 1:  // start to next waypoint planning strategy
         {
-          int next = 1;
-          while (next < ebandPlan.size()-1)
+          int next = 0;
+          double dist = 0.0;
+          while (dist < 0.4 && next < ebandPlan.size()-1)
           {
-            double dist = hypot(
+            next++;
+            dist = hypot(
               ebandPlan[0].pose.position.x - ebandPlan[next].pose.position.x,
               ebandPlan[0].pose.position.y - ebandPlan[next].pose.position.y);
-            double dyaw = fabs(angles::shortest_angular_distance(
-              tf::getYaw(ebandPlan[0].pose.orientation),
-              tf::getYaw(ebandPlan[next].pose.orientation)));
-
-            if (dist < xyGoalTolerance_ && dyaw < yawGoalTolerance_)
-              next++;
-            else
-              break;
           }
-          failIdx = ebandPlan.size() * rsPlanner_->planPath(
-            ebandPlan.front(), *(ebandPlan.begin()+next), rsPlan);
+          failIdx = 0;
+          while (failIdx == 0 && next < ebandPlan.size())
+          {
+            failIdx = ebandPlan.size() * rsPlanner_->planPath(
+              ebandPlan.front(), *(ebandPlan.begin()+next), rsPlan);
+            next++;
+          }
           break;
         }
         case 2:  // point to point planning strategy until failure
@@ -258,14 +254,13 @@ namespace rsband_local_planner
           exit(EXIT_FAILURE);
       }
 
-      // calculate orientation error between robot and first eband target pose
       double dyaw = fabs(angles::shortest_angular_distance(
         tf::getYaw(ebandPlan[0].pose.orientation),
         tf::getYaw(ebandPlan[1].pose.orientation)));
 
       // if reeds shepp planning failed or there is orientation error > π/4
       // attempt emergency planning to reach target orientation (if enabled)
-      if (emergencyPlanning_ && (failIdx == 0 || dyaw > M_PI/3))
+      if (emergencyPlanning_ && (failIdx == 0 && dyaw > M_PI/3))
       {
         ROS_DEBUG("Failed to get reeds shepp plan. Attempting "
           "emergency planning...");
@@ -302,9 +297,10 @@ namespace rsband_local_planner
         }
       }
 
-      // publish global, local and rs plans
+      // publish plans
       base_local_planner::publishPlan(globalPlan_, globalPlanPub_);
       base_local_planner::publishPlan(localPlan, localPlanPub_);
+      base_local_planner::publishPlan(ebandPlan, ebandPlanPub_);
       base_local_planner::publishPlan(rsPlan, rsPlanPub_);
 
       // compute velocity command
