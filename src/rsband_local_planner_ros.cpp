@@ -77,7 +77,7 @@ namespace rsband_local_planner
     globalPlanPub_ = pnh.advertise<nav_msgs::Path>("global_plan", 1);
     localPlanPub_ = pnh.advertise<nav_msgs::Path>("local_plan", 1);
     ebandPlanPub_ = pnh.advertise<nav_msgs::Path>("eband_plan", 1);
-    rsPlanPub_ = pnh.advertise<nav_msgs::Path>("reeds_sheep_plan", 1);
+    rsPlanPub_ = pnh.advertise<nav_msgs::Path>("reeds_shepp_plan", 1);
 
     // create new eband planner
     ebandPlanner_ = boost::shared_ptr<eband_local_planner::EBandPlanner>(
