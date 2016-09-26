@@ -35,7 +35,7 @@
 * Author:  George Kouros
 *********************************************************************/
 
-#include "rsband_local_planner/car_like_fuzzy_ptc.h"
+#include "rsband_local_planner/fuzzy_ptc.h"
 
 #include <ros/package.h>
 #include <math.h>
@@ -59,14 +59,14 @@ namespace
 namespace rsband_local_planner
 {
 
-  CarLikeFuzzyPTC::CarLikeFuzzyPTC(std::string name) : initialized_(false)
+  FuzzyPTC::FuzzyPTC(std::string name) : initialized_(false)
   {
     pnh_ = new ros::NodeHandle("~/" + name);
     initialize();
   }
 
 
-  CarLikeFuzzyPTC::~CarLikeFuzzyPTC()
+  FuzzyPTC::~FuzzyPTC()
   {
     delete engine_;
     // no need to delete fuzzy variables and ruleblock, since it is done in
@@ -74,7 +74,7 @@ namespace rsband_local_planner
   }
 
 
-  void CarLikeFuzzyPTC::initialize()
+  void FuzzyPTC::initialize()
   {
     if (initialized_)
     {
@@ -150,7 +150,7 @@ namespace rsband_local_planner
   }
 
 
-  void CarLikeFuzzyPTC::reconfigure(RSBandPlannerConfig& config)
+  void FuzzyPTC::reconfigure(RSBandPlannerConfig& config)
   {
     wheelbase_ = config.wheelbase;
     maxSteeringAngle_ = config.max_steering_angle;
@@ -183,7 +183,7 @@ namespace rsband_local_planner
   }
 
 
-  void CarLikeFuzzyPTC::initializeFuzzyEngine()
+  void FuzzyPTC::initializeFuzzyEngine()
   {
     if (!initialized_)
     {
@@ -338,7 +338,7 @@ namespace rsband_local_planner
   }
 
 
-  bool CarLikeFuzzyPTC::computeVelocityCommands(
+  bool FuzzyPTC::computeVelocityCommands(
     const std::vector<geometry_msgs::PoseStamped>& path,
     geometry_msgs::Twist& cmd)
   {
@@ -431,7 +431,7 @@ namespace rsband_local_planner
   }
 
 
-  bool CarLikeFuzzyPTC::isGoalReached(
+  bool FuzzyPTC::isGoalReached(
     const std::vector<geometry_msgs::PoseStamped>& path)
   {
     bool positionReached =
@@ -442,7 +442,7 @@ namespace rsband_local_planner
   }
 
 
-  double CarLikeFuzzyPTC::calcAngularDeviationError(
+  double FuzzyPTC::calcAngularDeviationError(
     const std::vector<geometry_msgs::PoseStamped>& path,
     unsigned int subGoalIdx)
   {
@@ -451,7 +451,7 @@ namespace rsband_local_planner
   }
 
 
-  double CarLikeFuzzyPTC::calcOrientationError(
+  double FuzzyPTC::calcOrientationError(
     const std::vector<geometry_msgs::PoseStamped>& path,
     unsigned int subGoalIdx)
   {
@@ -459,7 +459,7 @@ namespace rsband_local_planner
   }
 
 
-  double CarLikeFuzzyPTC::calcPositionError(
+  double FuzzyPTC::calcPositionError(
     const std::vector<geometry_msgs::PoseStamped>& path,
     unsigned int subGoalIdx)
   {
@@ -467,7 +467,7 @@ namespace rsband_local_planner
   }
 
 
-  double CarLikeFuzzyPTC::calcLateralDeviationError(
+  double FuzzyPTC::calcLateralDeviationError(
     const std::vector<geometry_msgs::PoseStamped>& path,
     unsigned int subGoalIdx)
   {
@@ -476,7 +476,7 @@ namespace rsband_local_planner
   }
 
 
-  double CarLikeFuzzyPTC::calcDistance(
+  double FuzzyPTC::calcDistance(
     const std::vector<geometry_msgs::PoseStamped>& path,
     unsigned int idx1, unsigned int idx2)
   {
@@ -489,7 +489,7 @@ namespace rsband_local_planner
   }
 
 
-  unsigned int CarLikeFuzzyPTC::findSubGoal(
+  unsigned int FuzzyPTC::findSubGoal(
     const std::vector<geometry_msgs::PoseStamped>& path)
   {
     unsigned int subGoalIdx = 0;
@@ -515,7 +515,7 @@ namespace rsband_local_planner
   }
 
 
-  bool CarLikeFuzzyPTC::isCuspPoint(
+  bool FuzzyPTC::isCuspPoint(
     const std::vector<geometry_msgs::PoseStamped>& path,
     unsigned int idx)
   {

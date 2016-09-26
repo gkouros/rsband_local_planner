@@ -89,7 +89,7 @@ namespace rsband_local_planner
     eband2RSStrategy_ = 0;
 
     // create new path tracking controller
-    ptc_ = boost::shared_ptr<CarLikeFuzzyPTC>(new CarLikeFuzzyPTC(name));
+    ptc_ = boost::shared_ptr<FuzzyPTC>(new FuzzyPTC(name));
 
     // create and initialize dynamic reconfigure
     drs_.reset(new drs(pnh));

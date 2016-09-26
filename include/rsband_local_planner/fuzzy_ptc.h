@@ -35,8 +35,8 @@
  * Author:  George Kouros
  *********************************************************************/
 
-#ifndef RSBAND_LOCAL_PLANNER_CAR_LIKE_FUZZY_PTC_H
-#define RSBAND_LOCAL_PLANNER_CAR_LIKE_FUZZY_PTC_H
+#ifndef RSBAND_LOCAL_PLANNER_FUZZY_PTC_H
+#define RSBAND_LOCAL_PLANNER_FUZZY_PTC_H
 
 // ros related libraries
 #include <ros/ros.h>
@@ -56,22 +56,22 @@ namespace rsband_local_planner
 {
 
   /**
-   * class CarLikeFuzzyPTC
+   * class FuzzyPTC
    * @brief Path tracking controller for car like robots, based on fuzzy logic
    */
-  class CarLikeFuzzyPTC
+  class FuzzyPTC
   {
     public:
       /*
        * @brief Constructor
        * @param name: Name used to load the paramaters of the controller
        */
-      CarLikeFuzzyPTC(std::string name);
+      FuzzyPTC(std::string name);
 
       /**
        * @brief Destructor
        */
-      ~CarLikeFuzzyPTC();
+      ~FuzzyPTC();
 
       /**
        * @brief Reconfigures controller params
@@ -250,4 +250,4 @@ namespace rsband_local_planner
 
 }
 
-#endif  // RSBAND_LOCAL_PLANNER_CAR_LIKE_FUZZY_PTC_H
+#endif  // RSBAND_LOCAL_PLANNER_FUZZY_PTC_H

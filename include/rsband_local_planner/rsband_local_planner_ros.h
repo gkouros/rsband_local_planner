@@ -45,7 +45,7 @@
 #include <nav_core/base_local_planner.h>
 #include "eband_local_planner/eband_local_planner.h"
 #include "rsband_local_planner/reeds_shepp_planner.h"
-#include "rsband_local_planner/car_like_fuzzy_ptc.h"
+#include "rsband_local_planner/fuzzy_ptc.h"
 
 #include <dynamic_reconfigure/server.h>
 #include "rsband_local_planner/RSBandPlannerConfig.h"
@@ -150,7 +150,7 @@ namespace rsband_local_planner
       //! reeds shepp planner ptr
       boost::shared_ptr<ReedsSheppPlanner> rsPlanner_;
       //! path tracking controller ptr
-      boost::shared_ptr<CarLikeFuzzyPTC> ptc_;
+      boost::shared_ptr<FuzzyPTC> ptc_;
 
       //! distance to goal tolerance
       double xyGoalTolerance_;

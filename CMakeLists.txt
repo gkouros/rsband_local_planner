@@ -50,7 +50,7 @@ link_directories(/usr/local/lib ${catkin_INCLUDE_DIRS})
 # build the library
 add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}_ros.cpp
-  src/car_like_fuzzy_ptc.cpp
+  src/fuzzy_ptc.cpp
   src/reeds_shepp_planner.cpp
 )
 
