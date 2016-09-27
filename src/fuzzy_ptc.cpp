@@ -215,7 +215,7 @@ namespace rsband_local_planner
     angularDeviationError_->addTerm(new fl::Trapezoid("RR", -175.0, -165.0, -130.0, -120.0));
     angularDeviationError_->addTerm(new fl::Trapezoid("SR", -130.0, -120.0, -40.0, -30.0));
     angularDeviationError_->addTerm(new fl::Trapezoid("FR", -40.0, -30.0, -15.0, -5.0));
-    angularDeviationError_->addTerm(new fl::Trapezoid("FA", -15.0, -5.0, 10.0, 5.0));
+    angularDeviationError_->addTerm(new fl::Trapezoid("FA", -15.0, -5.0, 5.0, 15.0));
     angularDeviationError_->addTerm(new fl::Trapezoid("FL", 5.0, 15.0, 30.0, 40.0));
     angularDeviationError_->addTerm(new fl::Trapezoid("SL", 30.0, 40.0, 120.0, 130.0));
     angularDeviationError_->addTerm(new fl::Trapezoid("RL", 120.0, 130.0, 165.0, 175.0));
