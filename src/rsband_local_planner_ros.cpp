@@ -109,7 +109,6 @@ namespace rsband_local_planner
     xyGoalTolerance_ = config.xy_goal_tolerance;
     yawGoalTolerance_ = config.yaw_goal_tolerance;
     eband2RSStrategy_ = config.eband_to_rs_strategy;
-    mergePlans_ = config.merge_plans;
     emergencyPlanning_ = config.emergency_planning;
 
     if (rsPlanner_)
@@ -282,20 +281,6 @@ namespace rsband_local_planner
 
       // set reeds shepp plan as local plan
       localPlan = rsPlan;
-
-      // merge rsPlan with the left out waypoints of eband to get rsband plan
-      if (mergePlans_)
-      {
-        for (unsigned int i = failIdx+1; i < ebandPlan.size(); i++)
-        {
-          geometry_msgs::PoseStamped pose;
-          tfListener_->transformPose(rsPlan.front().header.frame_id,
-            ebandPlan.front().header.stamp, ebandPlan[i],
-            ebandPlan[i].header.frame_id,
-            pose);
-          localPlan.push_back(pose);
-        }
-      }
 
       // publish plans
       base_local_planner::publishPlan(globalPlan_, globalPlanPub_);
