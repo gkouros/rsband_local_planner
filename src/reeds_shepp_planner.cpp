@@ -75,6 +75,7 @@ namespace rsband_local_planner
     pnh.param<int>("valid_state_max_cost", validStateMaxCost_, 252);
     pnh.param<int>("interpolation_num_poses", interpolationNumPoses_, 20);
     pnh.param<bool>("allow_unknown", allowUnknown_, false);
+    pnh.param<bool>("robot_state_valid", robotStateValid_, false);
     pnh.param<bool>("display_planner_output", displayPlannerOutput_, false);
 
     if (costmapROS_)
@@ -115,6 +116,7 @@ namespace rsband_local_planner
     interpolationNumPoses_ = config.interpolation_num_poses;
     validStateMaxCost_ = config.valid_state_max_cost;
     allowUnknown_ = config.allow_unknown;
+    robotStateValid_ = config.robot_state_valid;
     displayPlannerOutput_ = config.display_planner_output;
 
     if (config.rear_steering_mode == 0 || config.rear_steering_mode ==  2)
@@ -191,9 +193,12 @@ namespace rsband_local_planner
       state->as<ompl::base::SE2StateSpace::StateType>();
 
     // robot pose is always valid
-    if (fabs(s->getX()) < 1e-3 && fabs(s->getY()) < 1e-3
-        && fabs(s->getYaw()) < 0.1)
-      return true;
+    if (robotStateValid_)
+    {
+      if (fabs(s->getX()) < 1e-3 && fabs(s->getY()) < 1e-3
+          && fabs(s->getYaw()) < 0.1)
+        return true;
+    }
 
     geometry_msgs::PoseStamped statePose;
     state2pose(s, statePose);

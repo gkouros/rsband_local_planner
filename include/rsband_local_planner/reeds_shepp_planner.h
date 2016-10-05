@@ -235,6 +235,8 @@ namespace rsband_local_planner
       int validStateMaxCost_;
       //! if true considers unknown costmap cells as free
       bool allowUnknown_;
+      //! regard robot pose as free
+      bool robotStateValid_;
       //! display planning information
       bool displayPlannerOutput_;
 
