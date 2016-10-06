@@ -108,6 +108,7 @@ namespace rsband_local_planner
   {
     xyGoalTolerance_ = config.xy_goal_tolerance;
     yawGoalTolerance_ = config.yaw_goal_tolerance;
+    updateSubGoalDistThreshold_ = config.update_sub_goal_dist_threshold;
     eband2RSStrategy_ = config.eband_to_rs_strategy;
     emergencyPlanning_ = config.emergency_planning;
 
@@ -221,20 +222,18 @@ namespace rsband_local_planner
         {
           int next = 0;
           double dist = 0.0;
-          while (dist < 0.4 && next < ebandPlan.size()-1)
+          while (dist < updateSubGoalDistThreshold_
+            && next < ebandPlan.size()-1)
           {
             next++;
-            dist = hypot(
-              ebandPlan[0].pose.position.x - ebandPlan[next].pose.position.x,
-              ebandPlan[0].pose.position.y - ebandPlan[next].pose.position.y);
+            dist += hypot(
+              ebandPlan[next-1].pose.position.x
+              - ebandPlan[next].pose.position.x,
+              ebandPlan[next-1].pose.position.y
+              - ebandPlan[next].pose.position.y);
           }
-          failIdx = 0;
-          while (failIdx == 0 && next < ebandPlan.size())
-          {
-            failIdx = ebandPlan.size() * rsPlanner_->planPath(
-              ebandPlan.front(), *(ebandPlan.begin()+next), rsPlan);
-            next++;
-          }
+          failIdx = rsPlanner_->planPath(ebandPlan.front(), ebandPlan[next],
+            rsPlan);
           break;
         }
         case 2:  // point to point planning strategy until failure

@@ -156,6 +156,8 @@ namespace rsband_local_planner
       double xyGoalTolerance_;
       //! angular deviation from goal pose tolerance
       double yawGoalTolerance_;
+      //! dist threshold used when updating sub goal
+      double updateSubGoalDistThreshold_;
 
       //! eband to reeds shepp band conversion strategy
       unsigned int eband2RSStrategy_;
