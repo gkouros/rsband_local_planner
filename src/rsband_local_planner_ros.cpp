@@ -258,7 +258,7 @@ namespace rsband_local_planner
 
       // if reeds shepp planning failed or there is orientation error > π/4
       // attempt emergency planning to reach target orientation (if enabled)
-      if (emergencyPlanning_ && (failIdx == 0 && dyaw > M_PI/3))
+      if (emergencyPlanning_ && (failIdx == 0 || dyaw > M_PI/2))
       {
         ROS_DEBUG("Failed to get reeds shepp plan. Attempting "
           "emergency planning...");
@@ -417,7 +417,7 @@ namespace rsband_local_planner
     std::vector<geometry_msgs::PoseStamped>& emergencyPlan)
   {
     std::vector<geometry_msgs::PoseStamped> tmpPlan(2, ebandPlan[0]);
-    tmpPlan.push_back(ebandPlan[1]);
+    tmpPlan.push_back(*(ebandPlan.end()-1));
 
     // interpolate orientation between robot position and target position
     interpolateOrientations(tmpPlan);
