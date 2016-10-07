@@ -103,6 +103,17 @@ namespace rsband_local_planner
        */
       bool isGoalReached();
 
+
+      //! eband to rs planning strategy enum
+      enum EbandToRSStrategy
+      {
+        startToEnd,
+        startToNext,
+        pointToPoint,
+        skipFailures,
+        startToRecedingEnd
+      };
+
     private:
 
       /**
@@ -160,7 +171,7 @@ namespace rsband_local_planner
       double updateSubGoalDistThreshold_;
 
       //! eband to reeds shepp band conversion strategy
-      unsigned int eband2RSStrategy_;
+      EbandToRSStrategy ebandToRSStrategy_;
 
       //!< determines whether emergency planning will be used in case of failure
       bool emergencyPlanning_;

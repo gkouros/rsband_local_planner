@@ -86,7 +86,7 @@ namespace rsband_local_planner
     // create new reeds shepp planner
     rsPlanner_ = boost::shared_ptr<ReedsSheppPlanner>(
       new ReedsSheppPlanner(name, costmapROS_, tfListener_));
-    eband2RSStrategy_ = 0;
+    ebandToRSStrategy_ = static_cast<EbandToRSStrategy>(0);
 
     // create new path tracking controller
     ptc_ = boost::shared_ptr<FuzzyPTC>(new FuzzyPTC(name));
@@ -109,7 +109,8 @@ namespace rsband_local_planner
     xyGoalTolerance_ = config.xy_goal_tolerance;
     yawGoalTolerance_ = config.yaw_goal_tolerance;
     updateSubGoalDistThreshold_ = config.update_sub_goal_dist_threshold;
-    eband2RSStrategy_ = config.eband_to_rs_strategy;
+    ebandToRSStrategy_ =
+      static_cast<EbandToRSStrategy>(config.eband_to_rs_strategy);
     emergencyPlanning_ = config.emergency_planning;
 
     if (rsPlanner_)
@@ -212,14 +213,15 @@ namespace rsband_local_planner
       // use reeds shepp planner to connect eband waypoints using RS paths
       // select between the available eband to reeds shepp conversion strategies
       int failIdx;
-      switch (eband2RSStrategy_)
+      switch (ebandToRSStrategy_)
       {
-        case 0:  // start to end planning strategy
+        case startToEnd:
           failIdx = ebandPlan.size() * rsPlanner_->planPath(
               ebandPlan.front(), ebandPlan.back(), rsPlan);
           break;
-        case 1:  // start to next waypoint planning strategy
+        case startToNext:
         {
+          // TODO: move below segment to reeds_shepp_planner new function
           int next = 0;
           double dist = 0.0;
           while (dist < updateSubGoalDistThreshold_
@@ -236,15 +238,13 @@ namespace rsband_local_planner
             rsPlan);
           break;
         }
-        case 2:  // point to point planning strategy until failure
+        case pointToPoint:
           failIdx = rsPlanner_->planPathUntilFailure(ebandPlan, rsPlan);
           break;
-        case 3:  // point to point planning strategy that skips failures
+        case skipFailures:
           failIdx = rsPlanner_->planPathSkipFailures(ebandPlan, rsPlan);
           break;
-        case 4:  // receding end planning strategy
-          // plan path between start and end of eband and if it fails, decrement
-          // end of eband and try again, until a solution or start is reached
+        case startToRecedingEnd:
           failIdx = rsPlanner_->planRecedingPath(ebandPlan, rsPlan);
           break;
         default:  // invalid strategy
