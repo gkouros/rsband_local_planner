@@ -116,16 +116,29 @@ namespace rsband_local_planner
     interpolationNumPoses_ = config.interpolation_num_poses;
     robotStateValid_ = config.robot_state_valid;
     stateCheckingMode_ =
-      static_cast<stateCheckingModes>(config.state_checking_mode);
+      static_cast<StateCheckingMode>(config.state_checking_mode);
     validStateMaxCost_ = config.valid_state_max_cost;
     allowUnknown_ = config.allow_unknown;
     displayPlannerOutput_ = config.display_planner_output;
 
-    if (config.rear_steering_mode == 0 || config.rear_steering_mode ==  2)
-      minTurningRadius_ = config.wheelbase / tan(config.max_steering_angle);
-    else  // counter or hybrid rear steering
+    RearSteeringMode rearSteeringMode = static_cast<RearSteeringMode>(
+      config.rear_steering_mode);
+    switch (rearSteeringMode)
+    {
+      case none:
+      case crab:
+        minTurningRadius_ = config.wheelbase / tan(config.max_steering_angle);
+        break;
+      case counter:
+      case hybrid:
         minTurningRadius_ =
           config.wheelbase / 2 / tan(config.max_steering_angle);
+        break;
+      default:
+        ROS_ERROR("Invalid rear steering mode:[%d]. Exiting...",
+          rearSteeringMode);
+        exit(EXIT_FAILURE);
+    }
   }
 
   void ReedsSheppPlanner::setBoundaries(const double bx, const double by)

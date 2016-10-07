@@ -82,17 +82,6 @@ namespace rsband_local_planner
       return;
     }
 
-    pnh_->param("wheelbase", wheelbase_, 0.32);
-    pnh_->param("max_steering_angle", maxSteeringAngle_, 0.35);
-    pnh_->param("max_speed", maxSpeed_, 0.2);
-    pnh_->param("updateSubGoalDistThreshold", updateSubGoalDistThreshold_, 0.4);
-    pnh_->param("xy_goal_tolerance", xyGoalTolerance_, 0.25);
-    pnh_->param("yaw_goal_tolerance", yawGoalTolerance_, 0.1);
-    pnh_->param("goal_dist_threshold", goalDistThreshold_, 0.2);
-    pnh_->param("lateral_deviation_tolerance", latDevTolerance_, 0.2);
-    pnh_->param<std::string>("rear_steering_mode", rearSteeringMode_, "none");
-    pnh_->param<bool>("display_controller_io", displayControllerIO_, false);
-
     // load fuzzy rules
     if (pnh_->hasParam("fuzzy_rules"))  // load from param server if available
     {
@@ -129,14 +118,6 @@ namespace rsband_local_planner
         std::vector<std::string> >();
     }
 
-    if (!(rearSteeringMode_ == "counter" || rearSteeringMode_ == "crab"
-      || rearSteeringMode_ == "hybrid" || rearSteeringMode_ == "none"))
-    {
-      ROS_FATAL("Invalid rear steering mode selected."
-        "Available modes are {none, counter, crab, hybrid}. Exiting...");
-      exit(EXIT_FAILURE);
-    }
-
     // initialize sub goal msg and publisher
     subGoal_.type = visualization_msgs::Marker::SPHERE;
     subGoal_.scale.x = subGoal_.scale.y = subGoal_.scale.z = 0.1;
@@ -144,9 +125,6 @@ namespace rsband_local_planner
     subGoalPub_ = pnh_->advertise<visualization_msgs::Marker>("sub_goal", 1);
 
     initialized_ = true;
-
-    // initialize fuzzy engine
-    initializeFuzzyEngine();
   }
 
 
@@ -159,24 +137,11 @@ namespace rsband_local_planner
     yawGoalTolerance_ = config.yaw_goal_tolerance;
     latDevTolerance_ = config.lateral_deviation_tolerance;
     updateSubGoalDistThreshold_ = config.update_sub_goal_dist_threshold;
+    goalDistThreshold_ = config.goal_dist_threshold;
     displayControllerIO_ = config.display_controller_io;
     stop_ = config.stop;
-
-    switch(config.rear_steering_mode)
-    {
-      case 0:
-        rearSteeringMode_ = "none";
-        break;
-      case 1:
-        rearSteeringMode_ = "counter";
-        break;
-      case 2:
-        rearSteeringMode_ = "crab";
-        break;
-      case 3:
-        rearSteeringMode_ = "hybrid";
-        break;
-    }
+    rearSteeringMode_ =
+      static_cast<RearSteeringMode>(config.rear_steering_mode);
 
     // reinitialize fuzzy engine with the updated parameters
     initializeFuzzyEngine();
@@ -213,11 +178,11 @@ namespace rsband_local_planner
     angularDeviationError_->setRange(-180.0, 180.0);
     angularDeviationError_->addTerm(new fl::Trapezoid("RBR", -180.0, -180.0, -175.0, -165.0));
     angularDeviationError_->addTerm(new fl::Trapezoid("RR", -175.0, -165.0, -130.0, -120.0));
-    angularDeviationError_->addTerm(new fl::Trapezoid("SR", -130.0, -120.0, -40.0, -30.0));
-    angularDeviationError_->addTerm(new fl::Trapezoid("FR", -40.0, -30.0, -15.0, -5.0));
+    angularDeviationError_->addTerm(new fl::Trapezoid("SR", -130.0, -120.0, -35.0, -25.0));
+    angularDeviationError_->addTerm(new fl::Trapezoid("FR", -35.0, -25.0, -15.0, -5.0));
     angularDeviationError_->addTerm(new fl::Trapezoid("FA", -15.0, -5.0, 5.0, 15.0));
-    angularDeviationError_->addTerm(new fl::Trapezoid("FL", 5.0, 15.0, 30.0, 40.0));
-    angularDeviationError_->addTerm(new fl::Trapezoid("SL", 30.0, 40.0, 120.0, 130.0));
+    angularDeviationError_->addTerm(new fl::Trapezoid("FL", 5.0, 15.0, 25.0, 35.0));
+    angularDeviationError_->addTerm(new fl::Trapezoid("SL", 25.0, 35.0, 120.0, 130.0));
     angularDeviationError_->addTerm(new fl::Trapezoid("RL", 120.0, 130.0, 165.0, 175.0));
     angularDeviationError_->addTerm(new fl::Trapezoid("RBL", 165.0, 175.0, 180.0, 180.0));
     engine_->addInputVariable(angularDeviationError_);
@@ -229,11 +194,11 @@ namespace rsband_local_planner
     orientationError_->setRange(-180.0, 180.0);
     orientationError_->addTerm(new fl::Trapezoid("RBR", -180.0, -180.0, -175.0, -165.0));
     orientationError_->addTerm(new fl::Trapezoid("RR", -175.0, -165.0, -130.0, -120.0));
-    orientationError_->addTerm(new fl::Trapezoid("SR", -130.0, -120.0, -40.0, -30.0));
+    orientationError_->addTerm(new fl::Trapezoid("SR", -130.0, -120.0, -35.0, -25.0));
     orientationError_->addTerm(new fl::Trapezoid("FR", -40.0, -30.0, -15.0, -10.0));
     orientationError_->addTerm(new fl::Trapezoid("FA", -15.0, -5.0, 5.0, 15.0));
-    orientationError_->addTerm(new fl::Trapezoid("FL", 5.0, 15.0, 30.0, 40.0));
-    orientationError_->addTerm(new fl::Trapezoid("SL", 30.0, 40.0, 120.0, 130.0));
+    orientationError_->addTerm(new fl::Trapezoid("FL", 5.0, 15.0, 25.0, 35.0));
+    orientationError_->addTerm(new fl::Trapezoid("SL", 25.0, 35.0, 120.0, 130.0));
     orientationError_->addTerm(new fl::Trapezoid("RL", 120.0, 130.0, 165.0, 175.0));
     orientationError_->addTerm(new fl::Trapezoid("RBL", 165.0, 175.0, 180.0, 180.0));
     engine_->addInputVariable(orientationError_);
@@ -378,18 +343,23 @@ namespace rsband_local_planner
 
     double rsa;  // rear steering angle
 
-    if (rearSteeringMode_ == "none")
-      rsa = 0.0;
-    else if (rearSteeringMode_ == "counter")
-      rsa = -fsa;
-    else if (rearSteeringMode_ == "crab")
-      rsa = deg2rad(rearSteeringDeviationAngle_->getOutputValue());
-    else if (rearSteeringMode_ == "hybrid")
-      rsa = -fsa + deg2rad(rearSteeringDeviationAngle_->getOutputValue());
-    else
-    { // it should never come here
-      ROS_FATAL("Invalid Steering Mode. Exiting...");
-      exit(EXIT_FAILURE);
+    switch(rearSteeringMode_)
+    {
+      case none:
+        rsa = 0.0;
+        break;
+      case counter:
+        rsa = -fsa;
+        break;
+      case crab:
+        rsa = deg2rad(rearSteeringDeviationAngle_->getOutputValue());
+        break;
+      case hybrid:
+        rsa = -fsa + deg2rad(rearSteeringDeviationAngle_->getOutputValue());
+        break;
+      default:
+        ROS_FATAL("Invalid Steering Mode. Exiting...");
+        exit(EXIT_FAILURE);
     }
 
     // clamp rsa in case -fsa+rsda exceeds limits
@@ -531,7 +501,7 @@ namespace rsband_local_planner
     double angle = acos((a.x * b.x + a.y * b.y) / hypot(a.x, a.y)
       / hypot(b.x, b.y));
 
-    return !isnan(angle) && (angle < 1.0) && (angle > 0.17);
+    return !isnan(angle) && (fabs(angle) < 1.0) && (fabs(angle) > 0.085);
   }
 
 }

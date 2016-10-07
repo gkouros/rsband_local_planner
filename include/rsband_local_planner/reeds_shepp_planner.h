@@ -149,8 +149,11 @@ namespace rsband_local_planner
       void setMaxPlanningDuration(double tmax) {maxPlanningDuration_ = tmax;}
       void setBoundaries(double bx, double by);
 
-      //! state checking modes enum
-      enum stateCheckingModes{center, footprint};
+      //! state checking mode enum
+      enum StateCheckingMode{center, footprint};
+
+      //! steering mode enum
+      enum RearSteeringMode{none, counter, crab, hybrid};
 
     private:
 
@@ -234,7 +237,7 @@ namespace rsband_local_planner
       //! number of poses to interpolate in the reeds shepp path
       int interpolationNumPoses_;
       //! state checking mode: center(0) or footprint(1)
-      stateCheckingModes stateCheckingMode_;
+      StateCheckingMode stateCheckingMode_;
       //! regard robot pose as free
       bool robotStateValid_;
       //! below this cost, a state is considered valid

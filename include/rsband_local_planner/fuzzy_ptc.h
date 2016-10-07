@@ -95,6 +95,8 @@ namespace rsband_local_planner
        */
       bool isGoalReached(const std::vector<geometry_msgs::PoseStamped>& path);
 
+      //! rear steering mode enum
+      enum RearSteeringMode{none, counter, crab, hybrid};
 
     private:
 
@@ -191,7 +193,7 @@ namespace rsband_local_planner
       visualization_msgs::Marker subGoal_;
 
       //! rear wheel steering mode (none/counter/crab/hybrid)
-      std::string rearSteeringMode_;
+      RearSteeringMode rearSteeringMode_;
 
       //! the robot wheelbase
       double wheelbase_;
