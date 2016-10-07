@@ -149,6 +149,9 @@ namespace rsband_local_planner
       void setMaxPlanningDuration(double tmax) {maxPlanningDuration_ = tmax;}
       void setBoundaries(double bx, double by);
 
+      //! state checking modes enum
+      enum stateCheckingModes{center, footprint};
+
     private:
 
       /**
@@ -196,7 +199,6 @@ namespace rsband_local_planner
       bool isStateValid(
         const ompl::base::SpaceInformation* si, const ompl::base::State *state);
 
-    private:
 
       //! The ompl Reeds-Sheep state space
       ompl::base::StateSpacePtr reedsSheppStateSpace_;
@@ -231,21 +233,22 @@ namespace rsband_local_planner
       double maxPlanningDuration_;
       //! number of poses to interpolate in the reeds shepp path
       int interpolationNumPoses_;
+      //! state checking mode: center(0) or footprint(1)
+      stateCheckingModes stateCheckingMode_;
+      //! regard robot pose as free
+      bool robotStateValid_;
       //! below this cost, a state is considered valid
       int validStateMaxCost_;
       //! if true considers unknown costmap cells as free
       bool allowUnknown_;
-      //! regard robot pose as free
-      bool robotStateValid_;
-      //! display planning information
-      bool displayPlannerOutput_;
-
       //! boundary size x
       double bx_;
       //! boundary size y
       double by_;
+      //! display planning information
+      bool displayPlannerOutput_;
 
-      //! set if planner is initialized
+      //! is set if planner is initialized
       bool initialized_;
   };
 

@@ -114,9 +114,11 @@ namespace rsband_local_planner
   {
     maxPlanningDuration_ = config.max_planning_duration;
     interpolationNumPoses_ = config.interpolation_num_poses;
+    robotStateValid_ = config.robot_state_valid;
+    stateCheckingMode_ =
+      static_cast<stateCheckingModes>(config.state_checking_mode);
     validStateMaxCost_ = config.valid_state_max_cost;
     allowUnknown_ = config.allow_unknown;
-    robotStateValid_ = config.robot_state_valid;
     displayPlannerOutput_ = config.display_planner_output;
 
     if (config.rear_steering_mode == 0 || config.rear_steering_mode ==  2)
@@ -192,9 +194,9 @@ namespace rsband_local_planner
     const ompl::base::SE2StateSpace::StateType *s =
       state->as<ompl::base::SE2StateSpace::StateType>();
 
-    // robot pose is always valid
     if (robotStateValid_)
     {
+      // robot pose is always valid
       if (fabs(s->getX()) < 1e-3 && fabs(s->getY()) < 1e-3
           && fabs(s->getYaw()) < 0.1)
         return true;
@@ -205,9 +207,21 @@ namespace rsband_local_planner
 
     transform(statePose, statePose, globalFrame_);
 
-    int cost = costmapModel_->footprintCost(
-      statePose.pose.position.x, statePose.pose.position.y,
-      tf::getYaw(statePose.pose.orientation), footprint_);
+    // calculate cost of robot center or footprint
+    int cost;
+    switch (stateCheckingMode_)
+    {
+      case center: // state checking of center of robot footprint
+        int mx, my;
+        costmap_->worldToMapEnforceBounds(statePose.pose.position.x,
+          statePose.pose.position.y, mx, my);
+        cost = costmap_->getCost(mx, my);
+        break;
+      case footprint: // state checking of footprint
+        cost = costmapModel_->footprintCost(
+          statePose.pose.position.x, statePose.pose.position.y,
+          tf::getYaw(statePose.pose.orientation), footprint_);
+    }
 
     // check if state is valid
     if (cost > validStateMaxCost_)
