@@ -417,7 +417,7 @@ namespace rsband_local_planner
     std::vector<geometry_msgs::PoseStamped>& emergencyPlan)
   {
     std::vector<geometry_msgs::PoseStamped> tmpPlan(2, ebandPlan[0]);
-    tmpPlan.push_back(*(ebandPlan.end()-1));
+    tmpPlan.push_back(ebandPlan[std::min<int>(ebandPlan.size()-1, 4)]);
 
     // interpolate orientation between robot position and target position
     interpolateOrientations(tmpPlan);
@@ -428,20 +428,14 @@ namespace rsband_local_planner
 
     // attempt to plan path, so as to remain in the same position, but
     // attain the orientation of the first eband target pose
-    bool success = false;
-    for (int i = 1; i < 4; i++)
-    {
-      tmpPlan[1].pose.orientation = tf::createQuaternionMsgFromYaw(
-          tf::getYaw(tmpPlan[0].pose.orientation) + dyaw / 2 / i);
+    double step = std::min(fabs(dyaw), 45.0 * M_PI / 180.0);
+    tmpPlan[1].pose.orientation = tf::createQuaternionMsgFromYaw(
+        tf::getYaw(tmpPlan[0].pose.orientation) + step * (dyaw > 0? 1 : -1));
 
-      if (rsPlanner_->planPath(tmpPlan[0], tmpPlan[1], emergencyPlan))
-      {
-        success = true;
-        break;
-      }
-    }
+    if (rsPlanner_->planPath(tmpPlan[0], tmpPlan[1], emergencyPlan))
+      return true;
 
-    return success;
+    return false;
   }
 
 
