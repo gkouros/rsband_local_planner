@@ -501,7 +501,7 @@ namespace rsband_local_planner
     double angle = acos((a.x * b.x + a.y * b.y) / hypot(a.x, a.y)
       / hypot(b.x, b.y));
 
-    return !isnan(angle) && (fabs(angle) < 1.0) && (fabs(angle) > 0.085);
+    return !isnan(angle) && (fabs(angle) < 1.0);// && (fabs(angle) > 0.085);
   }
 
 }
