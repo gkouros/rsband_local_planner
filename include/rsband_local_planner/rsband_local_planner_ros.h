@@ -175,6 +175,11 @@ namespace rsband_local_planner
 
       //!< determines whether emergency planning will be used in case of failure
       bool emergencyPlanning_;
+      //!< emergency mode
+      bool emergencyMode_;
+      //!< emergency plan poses
+      std::vector<geometry_msgs::PoseStamped> emergencyPoses_;
+
 
       //! global plan publisher
       ros::Publisher globalPlanPub_;

@@ -79,6 +79,8 @@ namespace rsband_local_planner
     ebandPlanPub_ = pnh.advertise<nav_msgs::Path>("eband_plan", 1);
     rsPlanPub_ = pnh.advertise<nav_msgs::Path>("reeds_shepp_plan", 1);
 
+    emergencyPoses_.resize(3);
+
     // create new eband planner
     ebandPlanner_ = boost::shared_ptr<eband_local_planner::EBandPlanner>(
       new eband_local_planner::EBandPlanner(name, costmapROS_));
@@ -262,13 +264,31 @@ namespace rsband_local_planner
       {
         ROS_DEBUG("Failed to get reeds shepp plan. Attempting "
           "emergency planning...");
-        if (emergencyPlanning_ && emergencyPlan(ebandPlan, rsPlan))
+
+        // enable emergency mode if not already enable
+        if (!emergencyMode_)
+        {
+          ROS_DEBUG("Commencing Emergency Mode.");
+          emergencyMode_ = true;
+          // add initial robot pose as emergency goal pose but with desired
+          // orientation
+          emergencyPoses_[1] = ebandPlan[0];
+          emergencyPoses_[1].pose.orientation =
+            ebandPlan[std::min<int>(1,ebandPlan.size()-1)].pose.orientation;
+          emergencyPoses_[2] = ebandPlan[0];
+        }
+
+        emergencyPoses_[0] = ebandPlan[0];
+
+
+        if (emergencyPlan(emergencyPoses_, rsPlan))
         {
           ROS_DEBUG("Emergency Planning succeeded!");
         }
         else
         {
           ROS_DEBUG("Emergency Planning failed!");
+          emergencyMode_ = false;
           return false;
         }
       }
@@ -277,6 +297,8 @@ namespace rsband_local_planner
           ROS_DEBUG("Failed to convert eband to rsband plan!");
           return false;
       }
+      else
+        emergencyMode_ = false;
 
       // set reeds shepp plan as local plan
       localPlan = rsPlan;
@@ -416,21 +438,21 @@ namespace rsband_local_planner
     std::vector<geometry_msgs::PoseStamped>& ebandPlan,
     std::vector<geometry_msgs::PoseStamped>& emergencyPlan)
   {
-    std::vector<geometry_msgs::PoseStamped> tmpPlan(2, ebandPlan[0]);
-    tmpPlan.push_back(ebandPlan[std::min<int>(ebandPlan.size()-1, 4)]);
+    std::vector<geometry_msgs::PoseStamped> tmpPlan = ebandPlan;
 
-    // interpolate orientation between robot position and target position
-    interpolateOrientations(tmpPlan);
-
+    double dyawOrig = angles::shortest_angular_distance(
+      tf::getYaw(tmpPlan[2].pose.orientation),
+      tf::getYaw(tmpPlan[1].pose.orientation));
     double dyaw = angles::shortest_angular_distance(
       tf::getYaw(tmpPlan[0].pose.orientation),
-      tf::getYaw(tmpPlan[2].pose.orientation));
+      tf::getYaw(tmpPlan[1].pose.orientation));
 
-    // attempt to plan path, so as to remain in the same position, but
-    // attain the orientation of the first eband target pose
-    double step = std::min(fabs(dyaw), 45.0 * M_PI / 180.0);
+    int factor = floor(fabs(dyawOrig - dyaw) * 180.0 / M_PI / 45.0);
+
+    double step = (factor+1) * 45.0 * M_PI / 180.0;
+
     tmpPlan[1].pose.orientation = tf::createQuaternionMsgFromYaw(
-        tf::getYaw(tmpPlan[0].pose.orientation) + step * (dyaw > 0? 1 : -1));
+        tf::getYaw(tmpPlan[2].pose.orientation) + (step + 0.5) * (dyaw > 0 ? 1 : -1));
 
     if (rsPlanner_->planPath(tmpPlan[0], tmpPlan[1], emergencyPlan))
       return true;
