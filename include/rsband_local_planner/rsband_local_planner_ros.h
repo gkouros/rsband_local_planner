@@ -57,7 +57,7 @@ namespace rsband_local_planner
 {
 
   /**
-   * @brief RSBandPlannerROS
+   * @class RSBandPlannerROS
    * @brief A local planner plugin for  move_base of ROS, for car like robots
    */
   class RSBandPlannerROS : public nav_core::BaseLocalPlanner
