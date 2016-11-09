@@ -56,7 +56,7 @@ namespace rsband_local_planner
 {
 
   /**
-   * class FuzzyPTC
+   * @class FuzzyPTC
    * @brief Path tracking controller for car like robots, based on fuzzy logic
    */
   class FuzzyPTC

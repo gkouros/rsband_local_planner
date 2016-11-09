@@ -8,9 +8,8 @@ robots with Ackermann or 4-Wheel-Steering.
 - [OMPL](https://github.com/ompl/ompl): Motion planning library, that contains a Reeds-Shepp State Space used in the Reeds-Shepp Path Planner
 - [fuzzylite](https://github.com/fuzzylite/fuzzylite):  Fuzzy logic control library, used in the fuzzy path tracking controller
 
-<br/>
 
-##### How to install fuzzylite
+#### How to install fuzzylite
 ```
 $ git clone git@github.com:fuzzylite/fuzzylite.git
 $ cd fuzzylite/fuzzylite
@@ -22,3 +21,8 @@ $ sudo make install
 
 #### [Documentation](https://gkouros.github.io/rsband_local_planner/doc/html/index.html)
 
+#### References
+- M. Khatib et al. “Dynamic path modification for car-like
+nonholonomic mobile robots”. In: Robotics and Automation, 1997.
+Proceedings., 1997 IEEE International Conference on. Vol. 4. Apr. 1997,
+2920–2925 vol.4. DOI: 10.1109/ROBOT.1997.606730
