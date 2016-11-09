@@ -27,6 +27,7 @@
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
@@ -41,6 +42,21 @@
 
 <p><code>#include &lt;<a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:aa34d03556bec26c61672a4d0704e60f9"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#aa34d03556bec26c61672a4d0704e60f9">RearSteeringMode</a> { <a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#aa34d03556bec26c61672a4d0704e60f9ad82d54555e7459e84bda3724cd5f9297">none</a>, 
+<a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#aa34d03556bec26c61672a4d0704e60f9ab41f07a783121c586e2409efbde85764">counter</a>, 
+<a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#aa34d03556bec26c61672a4d0704e60f9a533408e3a7f4a08c759683346358427b">crab</a>, 
+<a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#aa34d03556bec26c61672a4d0704e60f9a6a9da5bd0b71fff6ae131f57d1c346e1">hybrid</a>
+ }</td></tr>
+<tr class="memdesc:aa34d03556bec26c61672a4d0704e60f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">steering mode enum  <a href="classrsband__local__planner_1_1ReedsSheppPlanner.html#aa34d03556bec26c61672a4d0704e60f9">More...</a><br/></td></tr>
+<tr class="separator:aa34d03556bec26c61672a4d0704e60f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54343b149713e9299ee705121e6c1773"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#a54343b149713e9299ee705121e6c1773">StateCheckingMode</a> { <a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#a54343b149713e9299ee705121e6c1773a5f69c8f5da5106f8aa40e3c4ed43cb53">center</a>, 
+<a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#a54343b149713e9299ee705121e6c1773a5d30bf7fd0c4716fb8dde5f77b878f88">footprint</a>
+ }</td></tr>
+<tr class="memdesc:a54343b149713e9299ee705121e6c1773"><td class="mdescLeft">&#160;</td><td class="mdescRight">state checking mode enum  <a href="classrsband__local__planner_1_1ReedsSheppPlanner.html#a54343b149713e9299ee705121e6c1773">More...</a><br/></td></tr>
+<tr class="separator:a54343b149713e9299ee705121e6c1773"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac19ca57a7e25f68929368dfdbb6cba5e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#ac19ca57a7e25f68929368dfdbb6cba5e">getBX</a> ()</td></tr>
@@ -133,7 +149,7 @@ Private Attributes</h2></td></tr>
 <tr class="memdesc:ac11e8de32fa6c842017ae8c5b4491648"><td class="mdescLeft">&#160;</td><td class="mdescRight">the reference frame of the costmap  <a href="#ac11e8de32fa6c842017ae8c5b4491648">More...</a><br/></td></tr>
 <tr class="separator:ac11e8de32fa6c842017ae8c5b4491648"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf9c51cf91f804cf46c9337ebebc0585"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#aaf9c51cf91f804cf46c9337ebebc0585">initialized_</a></td></tr>
-<tr class="memdesc:aaf9c51cf91f804cf46c9337ebebc0585"><td class="mdescLeft">&#160;</td><td class="mdescRight">set if planner is initialized  <a href="#aaf9c51cf91f804cf46c9337ebebc0585">More...</a><br/></td></tr>
+<tr class="memdesc:aaf9c51cf91f804cf46c9337ebebc0585"><td class="mdescLeft">&#160;</td><td class="mdescRight">is set if planner is initialized  <a href="#aaf9c51cf91f804cf46c9337ebebc0585">More...</a><br/></td></tr>
 <tr class="separator:aaf9c51cf91f804cf46c9337ebebc0585"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad25056410acaf6e78091da37340f28ea"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#ad25056410acaf6e78091da37340f28ea">interpolationNumPoses_</a></td></tr>
 <tr class="memdesc:ad25056410acaf6e78091da37340f28ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of poses to interpolate in the reeds shepp path  <a href="#ad25056410acaf6e78091da37340f28ea">More...</a><br/></td></tr>
@@ -150,12 +166,18 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:ab663f901099ac3ccc7352baa021bddc9"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#ab663f901099ac3ccc7352baa021bddc9">robotFrame_</a></td></tr>
 <tr class="memdesc:ab663f901099ac3ccc7352baa021bddc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">the reference frame of the robot base  <a href="#ab663f901099ac3ccc7352baa021bddc9">More...</a><br/></td></tr>
 <tr class="separator:ab663f901099ac3ccc7352baa021bddc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4000673ea79e83ed2dd100a5700db700"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#a4000673ea79e83ed2dd100a5700db700">robotStateValid_</a></td></tr>
+<tr class="memdesc:a4000673ea79e83ed2dd100a5700db700"><td class="mdescLeft">&#160;</td><td class="mdescRight">regard robot pose as free  <a href="#a4000673ea79e83ed2dd100a5700db700">More...</a><br/></td></tr>
+<tr class="separator:a4000673ea79e83ed2dd100a5700db700"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f6d43a630ac7d3fa1b663bcd1ebbefe"><td class="memItemLeft" align="right" valign="top">ompl::geometric::SimpleSetupPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#a9f6d43a630ac7d3fa1b663bcd1ebbefe">simpleSetup_</a></td></tr>
 <tr class="memdesc:a9f6d43a630ac7d3fa1b663bcd1ebbefe"><td class="mdescLeft">&#160;</td><td class="mdescRight">OMPL geometric simple setup object.  <a href="#a9f6d43a630ac7d3fa1b663bcd1ebbefe">More...</a><br/></td></tr>
 <tr class="separator:a9f6d43a630ac7d3fa1b663bcd1ebbefe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f5fb5fba891bf591cbd973adb082688"><td class="memItemLeft" align="right" valign="top">ros::Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#a4f5fb5fba891bf591cbd973adb082688">stamp_</a></td></tr>
 <tr class="memdesc:a4f5fb5fba891bf591cbd973adb082688"><td class="mdescLeft">&#160;</td><td class="mdescRight">the stamp to use in path poses  <a href="#a4f5fb5fba891bf591cbd973adb082688">More...</a><br/></td></tr>
 <tr class="separator:a4f5fb5fba891bf591cbd973adb082688"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87d89e608b4122ddd80a2a7af414bfb9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#a54343b149713e9299ee705121e6c1773">StateCheckingMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#a87d89e608b4122ddd80a2a7af414bfb9">stateCheckingMode_</a></td></tr>
+<tr class="memdesc:a87d89e608b4122ddd80a2a7af414bfb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">state checking mode: center(0) or footprint(1)  <a href="#a87d89e608b4122ddd80a2a7af414bfb9">More...</a><br/></td></tr>
+<tr class="separator:a87d89e608b4122ddd80a2a7af414bfb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85099537c9ef4403c5aa246a635ef9f2"><td class="memItemLeft" align="right" valign="top">tf::TransformListener *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#a85099537c9ef4403c5aa246a635ef9f2">tfListener_</a></td></tr>
 <tr class="memdesc:a85099537c9ef4403c5aa246a635ef9f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">tf transform listener  <a href="#a85099537c9ef4403c5aa246a635ef9f2">More...</a><br/></td></tr>
 <tr class="separator:a85099537c9ef4403c5aa246a635ef9f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,7 +189,56 @@ Private Attributes</h2></td></tr>
 <div class="textblock"><p>Planner - ROS wrapper for the Reeds-Shepp state space of OMPL. </p>
 
 <p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00060">60</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a class="anchor" id="aa34d03556bec26c61672a4d0704e60f9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#aa34d03556bec26c61672a4d0704e60f9">rsband_local_planner::ReedsSheppPlanner::RearSteeringMode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>steering mode enum </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><em><a class="anchor" id="aa34d03556bec26c61672a4d0704e60f9ad82d54555e7459e84bda3724cd5f9297"></a>none</em>&#160;</td><td class="fielddoc">
+</td></tr>
+<tr><td class="fieldname"><em><a class="anchor" id="aa34d03556bec26c61672a4d0704e60f9ab41f07a783121c586e2409efbde85764"></a>counter</em>&#160;</td><td class="fielddoc">
+</td></tr>
+<tr><td class="fieldname"><em><a class="anchor" id="aa34d03556bec26c61672a4d0704e60f9a533408e3a7f4a08c759683346358427b"></a>crab</em>&#160;</td><td class="fielddoc">
+</td></tr>
+<tr><td class="fieldname"><em><a class="anchor" id="aa34d03556bec26c61672a4d0704e60f9a6a9da5bd0b71fff6ae131f57d1c346e1"></a>hybrid</em>&#160;</td><td class="fielddoc">
+</td></tr>
+</table>
+
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00156">156</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a54343b149713e9299ee705121e6c1773"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#a54343b149713e9299ee705121e6c1773">rsband_local_planner::ReedsSheppPlanner::StateCheckingMode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>state checking mode enum </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><em><a class="anchor" id="a54343b149713e9299ee705121e6c1773a5f69c8f5da5106f8aa40e3c4ed43cb53"></a>center</em>&#160;</td><td class="fielddoc">
+</td></tr>
+<tr><td class="fieldname"><em><a class="anchor" id="a54343b149713e9299ee705121e6c1773a5d30bf7fd0c4716fb8dde5f77b878f88"></a>footprint</em>&#160;</td><td class="fielddoc">
+</td></tr>
+</table>
+
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00153">153</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a76db8d3dd72be397bb9630512676b596"></a>
 <div class="memitem">
 <div class="memproto">
@@ -419,7 +490,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if state is valid </dd></dl>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00180">180</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00197">197</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
 
 </div>
 </div>
@@ -464,7 +535,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if planning succeeds </dd></dl>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00218">218</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00250">250</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
 
 </div>
 </div>
@@ -503,7 +574,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The idx of the pose the planning failed at </dd></dl>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00328">328</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00360">360</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
 
 </div>
 </div>
@@ -542,7 +613,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The idx of the pose the planning failed at </dd></dl>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00309">309</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00341">341</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
 
 </div>
 </div>
@@ -581,7 +652,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The idx of the pose the planning failed at </dd></dl>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00352">352</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00384">384</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
 
 </div>
 </div>
@@ -626,7 +697,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00169">169</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00186">186</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
 
 </div>
 </div>
@@ -652,7 +723,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00111">111</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00112">112</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
 
 </div>
 </div>
@@ -680,7 +751,7 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00127">127</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00144">144</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
 
 </div>
 </div>
@@ -777,7 +848,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00156">156</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00173">173</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
 
 </div>
 </div>
@@ -829,7 +900,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00138">138</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00155">155</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
 
 </div>
 </div>
@@ -881,7 +952,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00147">147</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8cpp_source.html#l00164">164</a> of file <a class="el" href="reeds__shepp__planner_8cpp_source.html">reeds_shepp_planner.cpp</a>.</p>
 
 </div>
 </div>
@@ -906,7 +977,7 @@ Private Attributes</h2></td></tr>
 
 <p>if true considers unknown costmap cells as free </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00237">237</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00246">246</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -930,7 +1001,7 @@ Private Attributes</h2></td></tr>
 
 <p>planner space boundaries (should match local costmap boundaries) </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00206">206</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00211">211</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -954,7 +1025,7 @@ Private Attributes</h2></td></tr>
 
 <p>boundary size x </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00242">242</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00248">248</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -978,7 +1049,7 @@ Private Attributes</h2></td></tr>
 
 <p>boundary size y </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00244">244</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00250">250</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1002,7 +1073,7 @@ Private Attributes</h2></td></tr>
 
 <p>ptr to costmap </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00209">209</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00214">214</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1026,7 +1097,7 @@ Private Attributes</h2></td></tr>
 
 <p>ptr to costmap model </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00213">213</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00218">218</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1050,7 +1121,7 @@ Private Attributes</h2></td></tr>
 
 <p>ptr to costmap ros wrapper </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00211">211</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00216">216</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1074,7 +1145,7 @@ Private Attributes</h2></td></tr>
 
 <p>display planning information </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00239">239</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00252">252</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1098,7 +1169,7 @@ Private Attributes</h2></td></tr>
 
 <p>robot footprint, used in validity checking </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00215">215</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00220">220</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1122,7 +1193,7 @@ Private Attributes</h2></td></tr>
 
 <p>the reference frame of the costmap </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00223">223</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00228">228</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1144,9 +1215,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>set if planner is initialized </p>
+<p>is set if planner is initialized </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00247">247</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00255">255</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1170,7 +1241,7 @@ Private Attributes</h2></td></tr>
 
 <p>number of poses to interpolate in the reeds shepp path </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00233">233</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00238">238</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1194,7 +1265,7 @@ Private Attributes</h2></td></tr>
 
 <p>maximum Reeds-Shepp planning duration </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00231">231</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00236">236</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1218,7 +1289,7 @@ Private Attributes</h2></td></tr>
 
 <p>minimum turning radius of the robot (dependent on rear steering mode) </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00229">229</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00234">234</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1242,7 +1313,7 @@ Private Attributes</h2></td></tr>
 
 <p>The ompl Reeds-Sheep state space. </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00202">202</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00207">207</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1266,7 +1337,31 @@ Private Attributes</h2></td></tr>
 
 <p>the reference frame of the robot base </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00221">221</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00226">226</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a4000673ea79e83ed2dd100a5700db700"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool rsband_local_planner::ReedsSheppPlanner::robotStateValid_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>regard robot pose as free </p>
+
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00242">242</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1290,7 +1385,7 @@ Private Attributes</h2></td></tr>
 
 <p>OMPL geometric simple setup object. </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00204">204</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00209">209</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1314,7 +1409,31 @@ Private Attributes</h2></td></tr>
 
 <p>the stamp to use in path poses </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00226">226</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00231">231</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a87d89e608b4122ddd80a2a7af414bfb9"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classrsband__local__planner_1_1ReedsSheppPlanner.html#a54343b149713e9299ee705121e6c1773">StateCheckingMode</a> rsband_local_planner::ReedsSheppPlanner::stateCheckingMode_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>state checking mode: center(0) or footprint(1) </p>
+
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00240">240</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1338,7 +1457,7 @@ Private Attributes</h2></td></tr>
 
 <p>tf transform listener </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00218">218</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00223">223</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1362,7 +1481,7 @@ Private Attributes</h2></td></tr>
 
 <p>below this cost, a state is considered valid </p>
 
-<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00235">235</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
+<p>Definition at line <a class="el" href="reeds__shepp__planner_8h_source.html#l00244">244</a> of file <a class="el" href="reeds__shepp__planner_8h_source.html">reeds_shepp_planner.h</a>.</p>
 
 </div>
 </div>
@@ -1376,7 +1495,7 @@ Private Attributes</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/rsband_local_planner">rsband_local_planner</a><br />
 Author(s): George Kouros <gkourosg@yahoo.gr></br />
-<small>autogenerated on Tue Aug 9 2016 23:25:50</small>
+<small>autogenerated on Wed Nov 9 2016 18:24:15</small>
 </div>
 </body>
 </html>

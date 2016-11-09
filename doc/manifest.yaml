@@ -13,6 +13,7 @@ depends:
 - ompl
 - nav_core
 - geometry_msgs
+- angles
 - tf
 - base_local_planner
 - tf_conversions
