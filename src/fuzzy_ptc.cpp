@@ -233,11 +233,11 @@ namespace rsband_local_planner
     frontSteeringAngle_->setEnabled(true);
     frontSteeringAngle_->setName("FSA");
     frontSteeringAngle_->setRange(-rad2deg(maxSteeringAngle_), rad2deg(maxSteeringAngle_));
-    frontSteeringAngle_->fuzzyOutput()->setAccumulation(fl::null);
+    frontSteeringAngle_->fuzzyOutput()->setAggregation(fl::null);
     frontSteeringAngle_->setDefuzzifier(new fl::WeightedAverage("TakagiSugeno"));
     frontSteeringAngle_->setDefaultValue(0.0);
-    frontSteeringAngle_->setLockPreviousOutputValue(true);
-    frontSteeringAngle_->setLockOutputValueInRange(false);
+    frontSteeringAngle_->setLockPreviousValue(true);
+    frontSteeringAngle_->setLockValueInRange(false);
     frontSteeringAngle_->addTerm(new fl::Constant("RH", -rad2deg(maxSteeringAngle_)));
     frontSteeringAngle_->addTerm(new fl::Constant("RL", -rad2deg(maxSteeringAngle_) / 2));
     frontSteeringAngle_->addTerm(new fl::Constant("Z", 0.0));
@@ -250,11 +250,11 @@ namespace rsband_local_planner
     rearSteeringDeviationAngle_->setEnabled(true);
     rearSteeringDeviationAngle_->setName("RSDA");
     rearSteeringDeviationAngle_->setRange(-rad2deg(maxSteeringAngle_), rad2deg(maxSteeringAngle_));
-    rearSteeringDeviationAngle_->fuzzyOutput()->setAccumulation(fl::null);
+    rearSteeringDeviationAngle_->fuzzyOutput()->setAggregation(fl::null);
     rearSteeringDeviationAngle_->setDefuzzifier(new fl::WeightedAverage("TakagiSugeno"));
-    rearSteeringDeviationAngle_->setDefaultValue(fl::null);
-    rearSteeringDeviationAngle_->setLockPreviousOutputValue(true);
-    rearSteeringDeviationAngle_->setLockOutputValueInRange(false);
+    rearSteeringDeviationAngle_->setDefaultValue(0);
+    rearSteeringDeviationAngle_->setLockPreviousValue(true);
+    rearSteeringDeviationAngle_->setLockValueInRange(false);
     rearSteeringDeviationAngle_->addTerm(new fl::Constant("RH", -rad2deg(maxSteeringAngle_)));
     rearSteeringDeviationAngle_->addTerm(new fl::Constant("RL", -rad2deg(maxSteeringAngle_) / 2));
     rearSteeringDeviationAngle_->addTerm(new fl::Constant("Z", 0.0));
@@ -268,7 +268,7 @@ namespace rsband_local_planner
     speed_->setName("Speed");
     speed_->setDefaultValue(0.0);
     speed_->setRange(0.0, maxSpeed_);
-    speed_->fuzzyOutput()->setAccumulation(fl::null);
+    speed_->fuzzyOutput()->setAggregation(fl::null);
     speed_->setDefuzzifier(new fl::WeightedAverage("TakagiSugeno"));
     speed_->addTerm(new fl::Constant("SLOW", maxSpeed_ / 2));
     speed_->addTerm(new fl::Constant("FAST", maxSpeed_));
@@ -294,7 +294,7 @@ namespace rsband_local_planner
 
     engine_->addRuleBlock(ruleBlock_);
     engine_->configure(
-      "Minimum", "Maximum", "Minimum", "Maximum", "WeightedAverage");
+      "Minimum", "Maximum", "Minimum", "Maximum", "WeightedAverage", "General");
 
     std::string status;
     if (!engine_->isReady(&status))
@@ -330,16 +330,16 @@ namespace rsband_local_planner
       return true;
     }
 
-    angularDeviationError_->setInputValue(rad2deg(ea));
-    orientationError_->setInputValue(rad2deg(eo));
-    positionError_->setInputValue(ep);
-    lateralDeviationError_->setInputValue(ey);
-    direction_->setInputValue(drcn);
+    angularDeviationError_->setValue(rad2deg(ea));
+    orientationError_->setValue(rad2deg(eo));
+    positionError_->setValue(ep);
+    lateralDeviationError_->setValue(ey);
+    direction_->setValue(drcn);
 
     engine_->process();
 
-    double vel = drcn * speed_->getOutputValue();  // linear velocity
-    double fsa = deg2rad(frontSteeringAngle_->getOutputValue());  // front steering angle
+    double vel = drcn * speed_->getValue();  // linear velocity
+    double fsa = deg2rad(frontSteeringAngle_->getValue());  // front steering angle
 
     double rsa;  // rear steering angle
 
@@ -352,10 +352,10 @@ namespace rsband_local_planner
         rsa = -fsa;
         break;
       case crab:
-        rsa = deg2rad(rearSteeringDeviationAngle_->getOutputValue());
+        rsa = deg2rad(rearSteeringDeviationAngle_->getValue());
         break;
       case hybrid:
-        rsa = -fsa + deg2rad(rearSteeringDeviationAngle_->getOutputValue());
+        rsa = -fsa + deg2rad(rearSteeringDeviationAngle_->getValue());
         break;
       default:
         ROS_FATAL("Invalid Steering Mode. Exiting...");
@@ -376,14 +376,14 @@ namespace rsband_local_planner
       "vx: %.3f, vy: %.3f, w: %.3f, fsa: %.3f, rsa: %.3f",
       cmd.linear.x, cmd.linear.y, cmd.angular.z, rad2deg(fsa), rad2deg(rsa));
 
-    if (isnan(cmd.linear.x) or isnan(cmd.linear.y))
+    if (std::isnan(cmd.linear.x) or std::isnan(cmd.linear.y))
     {
       ROS_ERROR("Speed=Nan. Something went wrong!");
       cmd.linear.x = 0.0;
       cmd.linear.y = 0.0;
       return false;
     }
-    if (isnan(cmd.angular.z))
+    if (std::isnan(cmd.angular.z))
     {
       ROS_ERROR("RotVel=Nan. Something went wrong!");
       cmd.angular.z = 0.0;
@@ -501,7 +501,7 @@ namespace rsband_local_planner
     double angle = acos((a.x * b.x + a.y * b.y) / hypot(a.x, a.y)
       / hypot(b.x, b.y));
 
-    return !isnan(angle) && (fabs(angle) < 1.0);// && (fabs(angle) > 0.085);
+    return !std::isnan(angle) && (fabs(angle) < 1.0);// && (fabs(angle) > 0.085);
   }
 
 }
