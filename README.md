@@ -1,6 +1,6 @@
 # rsband_local_planner
-The rsband_local_planner combines an **elastic band planner**, a **reeds shepp planner** and a  
-**fuzzy logic based path tracking controller**, to achieve reactive local planning for Car-Like  
+The rsband_local_planner combines an **elastic band planner**, a **reeds shepp planner** and a
+**fuzzy logic based path tracking controller**, to achieve reactive local planning for Car-Like
 robots with Ackermann or 4-Wheel-Steering.
 
 #### Important Dependencies
@@ -13,6 +13,7 @@ robots with Ackermann or 4-Wheel-Steering.
 ```
 $ git clone git@github.com:fuzzylite/fuzzylite.git
 $ cd fuzzylite/fuzzylite
+$ git checkout fuzzylite-5.x
 $ mkdir build && cd build
 $ cmake ..
 $ make
