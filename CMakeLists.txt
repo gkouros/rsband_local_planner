@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(rsband_local_planner)
 
+# set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
 find_package(catkin REQUIRED
   COMPONENTS
     angles
     base_local_planner
+    cmake_modules
     costmap_2d
     dynamic_reconfigure
     eband_local_planner
@@ -15,7 +18,6 @@ find_package(catkin REQUIRED
     roscpp
     tf
     tf_conversions
-    yaml-cpp
 )
 
 find_package(OMPL REQUIRED)
@@ -32,6 +34,7 @@ catkin_package(
   CATKIN_DEPENDS
     angles
     base_local_planner
+    cmake_modules
     costmap_2d
     dynamic_reconfigure
     eband_local_planner
@@ -42,7 +45,6 @@ catkin_package(
     roscpp
     tf
     tf_conversions
-    yaml-cpp
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
 )
@@ -60,7 +62,6 @@ target_link_libraries(
   ${PROJECT_NAME}
   ${OMPL_LIBRARIES}
   fuzzylite
-  yaml-cpp
   ${catkin_LIBRARIES}
 )
 

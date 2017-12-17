@@ -19,6 +19,7 @@
 
   <depend>angles</depend>
   <depend>base_local_planner</depend>
+  <depend>cmake_modules</depend>
   <depend>costmap_2d</depend>
   <depend>dynamic_reconfigure</depend>
   <depend>eband_local_planner</depend>
@@ -30,7 +31,6 @@
   <depend>roscpp</depend>
   <depend>tf</depend>
   <depend>tf_conversions</depend>
-  <depend>yaml-cpp</depend>
 
   <export>
     <nav_core plugin="${prefix}/blp_plugin.xml"/>
