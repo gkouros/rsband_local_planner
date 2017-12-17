@@ -13,7 +13,7 @@ robots with Ackermann or 4-Wheel-Steering.
 ```
 $ git clone git@github.com:fuzzylite/fuzzylite.git
 $ cd fuzzylite/fuzzylite
-$ git checkout fuzzylite-5.x
+$ git checkout fuzzylite-6.x
 $ mkdir build && cd build
 $ cmake ..
 $ make
