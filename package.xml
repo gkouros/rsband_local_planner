@@ -17,19 +17,20 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <depend>angles</depend>
+  <depend>base_local_planner</depend>
+  <depend>costmap_2d</depend>
+  <depend>dynamic_reconfigure</depend>
+  <depend>eband_local_planner</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_core</depend>
+  <depend>nav_msgs</depend>
+  <depend>ompl</depend>
+  <depend>pluginlib</depend>
   <depend>roscpp</depend>
   <depend>tf</depend>
   <depend>tf_conversions</depend>
-  <depend>dynamic_reconfigure</depend>
-  <depend>nav_core</depend>
-  <depend>base_local_planner</depend>
-  <depend>eband_local_planner</depend>
-  <depend>costmap_2d</depend>
-  <depend>geometry_msgs</depend>
-  <depend>nav_msgs</depend>
-  <depend>angles</depend>
-  <depend>pluginlib</depend>
-  <depend>ompl</depend>
+  <depend>yaml-cpp</depend>
 
   <export>
     <nav_core plugin="${prefix}/blp_plugin.xml"/>

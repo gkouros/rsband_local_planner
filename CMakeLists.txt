@@ -3,18 +3,19 @@ project(rsband_local_planner)
 
 find_package(catkin REQUIRED
   COMPONENTS
+    angles
+    base_local_planner
+    costmap_2d
+    dynamic_reconfigure
+    eband_local_planner
+    geometry_msgs
+    nav_core
+    nav_msgs
+    pluginlib
     roscpp
     tf
     tf_conversions
-    pluginlib
-    dynamic_reconfigure
-    nav_core
-    base_local_planner
-    eband_local_planner
-    costmap_2d
-    nav_msgs
-    geometry_msgs
-    angles
+    yaml-cpp
 )
 
 find_package(OMPL REQUIRED)
@@ -29,18 +30,19 @@ generate_dynamic_reconfigure_options(cfg/RSBandPlanner.cfg)
 
 catkin_package(
   CATKIN_DEPENDS
+    angles
+    base_local_planner
+    costmap_2d
+    dynamic_reconfigure
+    eband_local_planner
+    geometry_msgs
+    nav_core
+    nav_msgs
+    pluginlib
     roscpp
     tf
     tf_conversions
-    pluginlib
-    dynamic_reconfigure
-    nav_core
-    base_local_planner
-    eband_local_planner
-    costmap_2d
-    nav_msgs
-    geometry_msgs
-    angles
+    yaml-cpp
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
 )
