@@ -99,7 +99,7 @@ namespace rsband_local_planner
       }
 
       if (pnh_->getParam("fuzzy_rules/rear_steering_deviation_rules",
-          speedRules_))
+          rearSteeringDeviationRules_))
         ROS_WARN("Failed to load rear steering deviation fuzzy rules!");
     }
     else  // load from yaml file in pkg
