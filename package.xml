@@ -31,6 +31,7 @@
   <depend>roscpp</depend>
   <depend>tf</depend>
   <depend>tf_conversions</depend>
+  <depend>yaml-cpp</depend>
 
   <export>
     <nav_core plugin="${prefix}/blp_plugin.xml"/>

@@ -62,6 +62,7 @@ target_link_libraries(
   ${PROJECT_NAME}
   ${OMPL_LIBRARIES}
   fuzzylite
+  yaml-cpp
   ${catkin_LIBRARIES}
 )
 
