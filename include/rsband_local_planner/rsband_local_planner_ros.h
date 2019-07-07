@@ -51,6 +51,7 @@
 
 #include <dynamic_reconfigure/server.h>
 #include "rsband_local_planner/RSBandPlannerConfig.h"
+#include "eband_local_planner/EBandPlannerConfig.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
@@ -146,12 +147,19 @@ namespace rsband_local_planner
        * @param config: The dynamic reconfigure node configuration
        * @param level: reconfiguration level
        */
-      void reconfigureCallback(RSBandPlannerConfig& config, uint32_t level);
+      void rsbandReconfigureCallback(RSBandPlannerConfig& config, uint32_t level);
 
-      typedef dynamic_reconfigure::Server<
-        rsband_local_planner::RSBandPlannerConfig> drs;
-      //! dynamic reconfigure server ptr
-      boost::shared_ptr<drs> drs_;
+      /**
+       * @brief Reconfigures node parameters
+       * @param config: The dynamic reconfigure node configuration
+       * @param level: reconfiguration level
+       */
+      void ebandReconfigureCallback(eband_local_planner::EBandPlannerConfig& config, uint32_t level);
+
+      //! dynamic reconfigure server ptr for rsband planner
+      boost::shared_ptr< dynamic_reconfigure::Server<rsband_local_planner::RSBandPlannerConfig> > rsband_drs_;
+      //! dynamic reconfigure server ptr for eband planner
+      boost::shared_ptr< dynamic_reconfigure::Server<eband_local_planner::EBandPlannerConfig> > eband_drs_;
 
       //! tf transform listener ptr
       tf2_ros::Buffer* tfBuffer_;

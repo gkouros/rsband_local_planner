@@ -93,11 +93,19 @@ namespace rsband_local_planner
     // create new path tracking controller
     ptc_ = boost::shared_ptr<FuzzyPTC>(new FuzzyPTC(name));
 
-    // create and initialize dynamic reconfigure
-    drs_.reset(new drs(pnh));
-    drs::CallbackType cb =
-      boost::bind(&RSBandPlannerROS::reconfigureCallback, this, _1, _2);
-    drs_->setCallback(cb);
+    // create and initialize dynamic reconfigure for rsband
+    ros::NodeHandle rsband_pnh("~rsband");
+    rsband_drs_.reset(new dynamic_reconfigure::Server<rsband_local_planner::RSBandPlannerConfig>(rsband_pnh));
+    dynamic_reconfigure::Server<rsband_local_planner::RSBandPlannerConfig>::CallbackType rsband_drs_cb =
+      boost::bind(&RSBandPlannerROS::rsbandReconfigureCallback, this, _1, _2);
+    rsband_drs_->setCallback(rsband_drs_cb);
+
+    // create and initialize dynamic reconfigure for eband
+    ros::NodeHandle eband_pnh("~eband");
+    eband_drs_.reset(new dynamic_reconfigure::Server<eband_local_planner::EBandPlannerConfig>(eband_pnh));
+    dynamic_reconfigure::Server<eband_local_planner::EBandPlannerConfig>::CallbackType eband_drs_cb =
+      boost::bind(&RSBandPlannerROS::ebandReconfigureCallback, this, _1, _2);
+    eband_drs_->setCallback(eband_drs_cb);
 
     // set initilized
     initialized_ = true;
@@ -105,8 +113,7 @@ namespace rsband_local_planner
     ROS_DEBUG("Local Planner Plugin Initialized!");
   }
 
-  void RSBandPlannerROS::reconfigureCallback(RSBandPlannerConfig& config,
-    uint32_t level)
+  void RSBandPlannerROS::rsbandReconfigureCallback(RSBandPlannerConfig& config, uint32_t level)
   {
     xyGoalTolerance_ = config.xy_goal_tolerance;
     yawGoalTolerance_ = config.yaw_goal_tolerance;
@@ -124,8 +131,17 @@ namespace rsband_local_planner
     if (ptc_)
       ptc_->reconfigure(config);
     else
-      ROS_ERROR("Reconfigure CB called before path tracking controller "
+      ROS_ERROR("RSBand reconfigure CB called before path tracking controller "
         "initialization!");
+  }
+
+  void RSBandPlannerROS::ebandReconfigureCallback(eband_local_planner::EBandPlannerConfig& config, uint32_t level)
+  {
+    if (ebandPlanner_)
+      ebandPlanner_->reconfigure(config);
+    else
+      ROS_ERROR("EBand reconfigure CB called before eband planner "
+        "initialization");
   }
 
 
@@ -139,6 +155,7 @@ namespace rsband_local_planner
     }
 
     globalPlan_ = globalPlan;
+
 
     std::vector<int> planStartEndCounters(2, globalPlan_.size());
 
@@ -156,7 +173,6 @@ namespace rsband_local_planner
       return false;
     }
 
-
     if(!ebandPlanner_->setPlan(transformedPlan_))
     {
       costmapROS_->resetLayers();
@@ -171,7 +187,6 @@ namespace rsband_local_planner
 
     if (!ebandPlanner_->optimizeBand())
       ROS_WARN("Optimization of eband failed!");
-
 
     return true;
   }
@@ -294,8 +309,8 @@ namespace rsband_local_planner
       }
       else if (!failIdx)
       {
-          ROS_DEBUG("Failed to convert eband to rsband plan!");
-          return false;
+        ROS_DEBUG("Failed to convert eband to rsband plan!");
+        return false;
       }
       else
         emergencyMode_ = false;
@@ -456,7 +471,6 @@ namespace rsband_local_planner
 
     return false;
   }
-
 
   void RSBandPlannerROS::interpolateOrientations(
     std::vector<geometry_msgs::PoseStamped>& plan)
