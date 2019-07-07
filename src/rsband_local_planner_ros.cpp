@@ -41,8 +41,7 @@
 #include <pluginlib/class_list_macros.h>
 #include <angles/angles.h>
 
-PLUGINLIB_DECLARE_CLASS(rsband_local_planner, RSBandPlannerROS,
-  rsband_local_planner::RSBandPlannerROS, nav_core::BaseLocalPlanner);
+PLUGINLIB_EXPORT_CLASS(rsband_local_planner::RSBandPlannerROS, nav_core::BaseLocalPlanner);
 
 namespace rsband_local_planner
 {
@@ -58,7 +57,7 @@ namespace rsband_local_planner
 
 
   void RSBandPlannerROS::initialize(std::string name,
-    tf::TransformListener* tfListener, costmap_2d::Costmap2DROS* costmapROS)
+    tf2_ros::Buffer* tfBuffer, costmap_2d::Costmap2DROS* costmapROS)
   {
     if (initialized_)
     {
@@ -67,11 +66,12 @@ namespace rsband_local_planner
       return;
     }
 
-    // store tflistener and costmapROS
-    tfListener_ = tfListener;
-    costmapROS_ = costmapROS;
-
     ros::NodeHandle pnh("~/" + name);
+
+    // store tflistener and costmapROS
+    tfBuffer_ = tfBuffer;
+    tfListener_ = new tf2_ros::TransformListener(*tfBuffer);
+    costmapROS_ = costmapROS;
 
     // initialize plan publishers
     globalPlanPub_ = pnh.advertise<nav_msgs::Path>("global_plan", 1);
@@ -87,7 +87,7 @@ namespace rsband_local_planner
 
     // create new reeds shepp planner
     rsPlanner_ = boost::shared_ptr<ReedsSheppPlanner>(
-      new ReedsSheppPlanner(name, costmapROS_, tfListener_));
+      new ReedsSheppPlanner(name, costmapROS_, tfBuffer_));
     ebandToRSStrategy_ = static_cast<EbandToRSStrategy>(0);
 
     // create new path tracking controller
@@ -142,7 +142,7 @@ namespace rsband_local_planner
 
     std::vector<int> planStartEndCounters(2, globalPlan_.size());
 
-    if (!eband_local_planner::transformGlobalPlan(*tfListener_, globalPlan_,
+    if (!eband_local_planner::transformGlobalPlan(*tfBuffer_, globalPlan_,
         *costmapROS_, costmapROS_->getGlobalFrameID(), transformedPlan_,
         planStartEndCounters))
     {
@@ -329,7 +329,7 @@ namespace rsband_local_planner
       return false;
     }
 
-    tf::Stamped<tf::Pose> robotPose;
+    geometry_msgs::PoseStamped robotPose;
     if (!costmapROS_->getRobotPose(robotPose))
     {
       ROS_ERROR("Could not get robot pose!");
@@ -362,17 +362,14 @@ namespace rsband_local_planner
     }
 
     // get robot pose
-    tf::Stamped<tf::Pose> robotPose;
+    geometry_msgs::PoseStamped robotPose;
     if (!costmapROS_->getRobotPose(robotPose))
     {
       ROS_ERROR("Could not get robot pose!");
       return false;
     }
-    // transform robot pose tf to msg
-    geometry_msgs::PoseStamped robotPoseMsg;
-    tf::poseStampedTFToMsg(robotPose, robotPoseMsg);
 
-    std::vector<geometry_msgs::PoseStamped> tmpPlan(1, robotPoseMsg);
+    std::vector<geometry_msgs::PoseStamped> tmpPlan(1, robotPose);
 
     // add robot pose to front of eband
     if (!ebandPlanner_->addFrames(tmpPlan, eband_local_planner::add_front))
@@ -385,7 +382,7 @@ namespace rsband_local_planner
     // ones that have left it
 
     std::vector<int> planStartEndCounters = planStartEndCounters_;
-    if (!eband_local_planner::transformGlobalPlan(*tfListener_, globalPlan_,
+    if (!eband_local_planner::transformGlobalPlan(*tfBuffer_, globalPlan_,
         *costmapROS_, costmapROS_->getGlobalFrameID(), transformedPlan_,
         planStartEndCounters))
     {

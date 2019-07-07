@@ -44,6 +44,10 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 
+#include "tf/transform_datatypes.h"
+#include "tf2_ros/transform_listener.h"
+#include "tf2_ros/message_filter.h"
+
 #include <ompl/base/ScopedState.h>
 #include <ompl/geometric/SimpleSetup.h>
 #include <ompl/base/spaces/ReedsSheppStateSpace.h>
@@ -65,12 +69,12 @@ namespace rsband_local_planner
        * @brief Constructor
        * @param name: Name used to load planner parameters
        * @param costmapROS: Ptr to the ROS wrapper of the local costmap
-       * @param tfListener: Ptr to a tf transform listener
+       * @param tfBuffer: Ptr to a tf transform buffer
        */
       ReedsSheppPlanner(
         std::string name,
         costmap_2d::Costmap2DROS* costmapROS,
-        tf::TransformListener* tfListener);
+        tf2_ros::Buffer* tfBuffer);
 
       /**
        * @brief Destructor
@@ -81,12 +85,12 @@ namespace rsband_local_planner
        * @param name: Name used to load planner parameters
        * @brief Initializes the planner
        * @param costmapROS: Ptr to the ROS wrapper of the local costmap
-       * @param tfListener: Ptr to a tf transform listener
+       * @param tfBuffer: Ptr to a tf transform listener
        */
       void initialize(
         std::string name,
         costmap_2d::Costmap2DROS* costmapROS,
-        tf::TransformListener* tfListener);
+        tf2_ros::Buffer* tfBuffer);
 
       /**
        * @brief Reconfigures the parameters of the planner
@@ -220,7 +224,7 @@ namespace rsband_local_planner
       std::vector<geometry_msgs::Point> footprint_;
 
       //! tf transform listener
-      tf::TransformListener* tfListener_;
+      tf2_ros::Buffer* tfBuffer_;
 
       //! the reference frame of the robot base
       std::string robotFrame_;

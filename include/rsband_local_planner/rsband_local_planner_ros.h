@@ -40,6 +40,8 @@
 
 #include <ros/ros.h>
 #include <tf/tf.h>
+#include <tf2_ros/transform_listener.h>
+#include <tf2_ros/buffer.h>
 #include <nav_msgs/Path.h>
 
 #include <nav_core/base_local_planner.h>
@@ -77,10 +79,10 @@ namespace rsband_local_planner
       /**
        * @brief Initializes planner
        * @param name: The name of the planner
-       * @param tfListener: ptr to a tf transform listener
+       * @param tfBuffer: ptr to a tf buffer
        * @param costmapROS: ptr to a costmap ros wrapper
        */
-      void initialize(std::string name, tf::TransformListener* tfListener,
+      void initialize(std::string name, tf2_ros::Buffer* tfBuffer,
         costmap_2d::Costmap2DROS* costmapROS);
 
       /**
@@ -152,7 +154,8 @@ namespace rsband_local_planner
       boost::shared_ptr<drs> drs_;
 
       //! tf transform listener ptr
-      tf::TransformListener* tfListener_;
+      tf2_ros::Buffer* tfBuffer_;
+      tf2_ros::TransformListener* tfListener_;
       //! costmap ROS wrapper ptr
       costmap_2d::Costmap2DROS* costmapROS_;
 

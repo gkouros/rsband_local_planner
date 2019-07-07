@@ -37,6 +37,7 @@
 
 #include "rsband_local_planner/reeds_shepp_planner.h"
 #include <tf/tf.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <boost/foreach.hpp>
 
 namespace rsband_local_planner
@@ -44,14 +45,14 @@ namespace rsband_local_planner
   ReedsSheppPlanner::ReedsSheppPlanner(
     std::string name,
     costmap_2d::Costmap2DROS* costmapROS,
-    tf::TransformListener* tfListener)
+    tf2_ros::Buffer* tfBuffer)
     :
       reedsSheppStateSpace_(new ompl::base::ReedsSheppStateSpace),
       simpleSetup_(new ompl::geometric::SimpleSetup(reedsSheppStateSpace_)),
-      costmapROS_(), tfListener_(), bx_(10), by_(10), bounds_(2),
+      costmapROS_(), tfBuffer_(), bx_(10), by_(10), bounds_(2),
       initialized_(false)
   {
-    initialize(name, costmapROS, tfListener);
+    initialize(name, costmapROS, tfBuffer);
   }
 
 
@@ -64,10 +65,10 @@ namespace rsband_local_planner
   void ReedsSheppPlanner::initialize(
     std::string name,
     costmap_2d::Costmap2DROS* costmapROS,
-    tf::TransformListener* tfListener)
+    tf2_ros::Buffer* tfBuffer)
   {
     costmapROS_ = costmapROS;
-    tfListener_ = tfListener;
+    tfBuffer_ = tfBuffer;
 
     ros::NodeHandle pnh("~/" + name);
     pnh.param("min_turning_radius", minTurningRadius_, 1.0);
@@ -84,7 +85,7 @@ namespace rsband_local_planner
       costmapModel_ = new base_local_planner::CostmapModel(*costmap_);
       footprint_ = costmapROS_->getRobotFootprint();
 
-      if (!tfListener_)
+      if (!tfBuffer_)
       {
         ROS_FATAL("No tf listener provided.");
         exit(EXIT_FAILURE);
@@ -155,20 +156,14 @@ namespace rsband_local_planner
   void ReedsSheppPlanner::transform(const geometry_msgs::PoseStamped& poseIn,
     geometry_msgs::PoseStamped& poseOut, std::string targetFrameID)
   {
-    tf::Stamped<tf::Pose> tfIn, tfOut;
-    tf::poseStampedMsgToTF(poseIn, tfIn);
-    transform(tfIn, tfOut, targetFrameID);
-    tf::poseStampedTFToMsg(tfOut, poseOut);
-  }
+    if (!tfBuffer_)
+      return;
 
-  void ReedsSheppPlanner::transform(const tf::Stamped<tf::Pose>& tfIn,
-    tf::Stamped<tf::Pose>& tfOut, std::string targetFrameID)
-  {
-    if (tfListener_)
-      tfListener_->transformPose(targetFrameID, stamp_, tfIn,
-        tfIn.frame_id_, tfOut);
-  }
+    geometry_msgs::TransformStamped transform = tfBuffer_->lookupTransform(targetFrameID, poseIn.header.frame_id, stamp_,
+      ros::Duration(1.0));
 
+    tf2::doTransform(poseIn, poseOut, transform);
+  }
 
   void ReedsSheppPlanner::state2pose(
     const ompl::base::State* state, geometry_msgs::PoseStamped& pose)
@@ -201,7 +196,7 @@ namespace rsband_local_planner
     if (!si->satisfiesBounds(state))
       return false;
 
-    if (!costmapROS_ || !tfListener_)
+    if (!costmapROS_ || !tfBuffer_)
       return true;
 
     const ompl::base::SE2StateSpace::StateType *s =
@@ -279,7 +274,7 @@ namespace rsband_local_planner
 
     // transform the start and goal poses to the robot/local reference frame
     geometry_msgs::PoseStamped localStartPose, localGoalPose;
-    if (tfListener_)
+    if (tfBuffer_)
     {
       transform(startPose, localStartPose, robotFrame_);
       transform(goalPose, localGoalPose, robotFrame_);
